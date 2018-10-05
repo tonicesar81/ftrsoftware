@@ -18,3 +18,14 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::resource('empresas', 'EmpresasController');
+Route::get('empresas/edit/{id}', 'EmpresasController@edit');
+
+Route::resource('shoppings', 'ShoppingsController');
+Route::get('shoppings/edit/{id}', 'ShoppingsController@edit');
+Route::post('shoppings/pesquisa', 'ShoppingsController@pesquisa');
+
+Route::resource('users', 'UsersController');
+Route::get('users/edit/{id}', 'UsersController@edit');
+Route::post('users/pesquisa', 'UsersController@pesquisa');

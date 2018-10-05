@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/ShoppingsController.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/shoppings/edit.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/shoppings/create.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/users/index.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/app/Empresa.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/UsersController.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/empresas/create.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/empresas/edit.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/routes/web.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/users/create.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/layouts/app.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/shoppings/index.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/users/edit.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/empresas/index.blade.php</file>
+        </group>
+    </open-files>
+</project-private>
