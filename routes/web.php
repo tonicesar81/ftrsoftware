@@ -29,3 +29,7 @@ Route::post('shoppings/pesquisa', 'ShoppingsController@pesquisa');
 Route::resource('users', 'UsersController');
 Route::get('users/edit/{id}', 'UsersController@edit');
 Route::post('users/pesquisa', 'UsersController@pesquisa');
+
+Route::resource('analise/projetos', 'ProjetosController');
+
+//Route::get('projetos/addFile/{id}', 'ProjetosController@addFile');
