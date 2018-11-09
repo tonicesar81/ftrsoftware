@@ -188,11 +188,12 @@ class ProjetosController extends Controller {
                 ->join('users as u', 'd.users_id', '=', 'u.id')
                 ->where('d.tipo_relatorios_id', $request->tipo_relatorios)
                 ->pluck('u.email');
-        try{
-            Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
-        } catch (\Exception $e) {
-            return redirect('analise/projetos/create')->with('message', 'Projeto adicionado para análise com sucesso.');
-        }
+//        try{
+//            Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
+//        } catch (\Exception $e) {
+//            return redirect('analise/projetos/create')->with('message', 'Projeto adicionado para análise com sucesso.');
+//        }
+        Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
 //        Mail::to(['analise01@ftrengenhariarj.com.br'])->send(new NewProjeto($shopping,$request->loja));
         //analise01@ftrengenhariarj.com.br
         
