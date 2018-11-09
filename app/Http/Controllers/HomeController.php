@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\User_dados;
 
 class HomeController extends Controller
 {
@@ -15,6 +18,14 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
     }
+    private function nivel(){
+        $nivel = User_dados::where('users_id', Auth::id())->value('user_levels_id');
+        if(!is_null($nivel)){
+            return $nivel;
+        }else{
+            return null;
+        }
+    }
 
     /**
      * Show the application dashboard.
@@ -23,6 +34,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        if(is_null($this->nivel())){
+            return redirect('analise/relatorios');
+        }else{
+            return redirect('analise/projetos');
+        }
+//        return view('home');
     }
 }

@@ -21,8 +21,16 @@ class ShoppingsController extends Controller {
         $this->middleware('auth');
     }
 
+    private function permission(){
+        $nivel = DB::table('user_dados')->where('users_id', Auth::id())->value('user_levels_id');
+        if(is_null($nivel)){
+            abort(403, 'Acesso Negado');
+        }
+    }
+    
     public function index(Request $request) {
         //
+        $this->permission();
         $pesquisa = $request->pesquisa;
 //        return var_dump($pesquisa);
         $shoppings = DB::table('shoppings')
@@ -38,6 +46,7 @@ class ShoppingsController extends Controller {
     }
     
     public function pesquisa(Request $request){
+        $this->permission();
         $pesquisa = $request->pesquisa;
         
         $shoppings = DB::table('shoppings')
@@ -58,6 +67,7 @@ class ShoppingsController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create() {
+        $this->permission();
         //
         $empresas = Empresa::all();
         $users = User::all();
@@ -71,6 +81,7 @@ class ShoppingsController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
+        $this->permission();
         //
         $this->validate($request, [
             'shopping' => 'required|unique:shoppings'
@@ -98,6 +109,7 @@ class ShoppingsController extends Controller {
      */
     public function show($id) {
         //
+        abort(404);
     }
 
     /**
@@ -108,6 +120,7 @@ class ShoppingsController extends Controller {
      */
     public function edit($id) {
         //
+        $this->permission();
         $empresas = Empresa::all();
         $shopping = Shopping::find($id);
         return view('shoppings.edit', ['shopping' => $shopping, 'empresas' => $empresas]);
@@ -122,6 +135,7 @@ class ShoppingsController extends Controller {
      */
     public function update(Request $request, $id) {
         //
+        $this->permission();
         $shopping = Shopping::find($id);
         $this->validate($request, [
             'shopping' => 'required|unique:shoppings,shopping,' . $shopping->id
@@ -147,6 +161,7 @@ class ShoppingsController extends Controller {
      */
     public function destroy($id) {
         //
+        $this->permission();
         $shopping = Shopping::find($id);
         $shopping->delete();
         return redirect('shoppings')->with('message', 'Shopping removido com sucesso');

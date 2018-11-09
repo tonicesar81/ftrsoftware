@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/welcome.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/users/index.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/UsersController.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/ProjetosController.php</file>
-            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/analise/projetos/add_projeto.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/routes/web.php</file>
-            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/analise/projetos/create.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/analise/relatorio/edit.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/users/create.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/layouts/app.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/users/edit.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/analise/pdf/show.blade.php</file>
         </group>
     </open-files>
 </project-private>

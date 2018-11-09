@@ -17,9 +17,15 @@ class EmpresasController extends Controller {
     public function __construct() {
         $this->middleware('auth');
     }
-
+    private function permission(){
+        $nivel = DB::table('user_dados')->where('users_id', Auth::id())->value('user_levels_id');
+        if(is_null($nivel)){
+            abort(403, 'Acesso Negado');
+        }
+    }
     public function index() {
         //
+        $this->permission();
         $empresas = Empresa::all();
         return view('empresas.index', ['empresas' => $empresas]);
     }
@@ -31,6 +37,7 @@ class EmpresasController extends Controller {
      */
     public function create() {
         //
+        $this->permission();
         return view('empresas.create');
     }
 
@@ -42,6 +49,7 @@ class EmpresasController extends Controller {
      */
     public function store(Request $request) {
         //
+        $this->permission();
         $this->validate($request, [
             'empresa' => 'required|unique:empresas'
         ]);
@@ -61,6 +69,7 @@ class EmpresasController extends Controller {
      */
     public function show($id) {
         //
+        abort(404);
     }
 
     /**
@@ -71,6 +80,7 @@ class EmpresasController extends Controller {
      */
     public function edit($id) {
         //
+        $this->permission();
         $empresa = Empresa::find($id);
 
         return view('empresas.edit', ['empresa' => $empresa]);
@@ -85,6 +95,7 @@ class EmpresasController extends Controller {
      */
     public function update(Request $request, $id) {
         //
+        $this->permission();
         $empresa = Empresa::find($id);
         $this->validate($request, [
             'empresa' => 'required|unique:empresas,empresa,' . $empresa->id
@@ -111,6 +122,7 @@ class EmpresasController extends Controller {
      */
     public function destroy($id) {
         //
+        $this->permission();
         $empresa = Empresa::find($id);
         $empresa->delete();
         DB::table('shoppings')->where('empresas_id', '=', $id)->delete();

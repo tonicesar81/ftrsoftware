@@ -1,3 +1,6 @@
+<?php
+$nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
+?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -11,17 +14,35 @@
 
         <!-- Scripts -->
         <!--<script src="{{ asset('js/app.js') }}" defer></script>-->
-        <script
+<!--        <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>-->
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>-->
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="http://beneposto.pl/jqueryrotate/js/jQueryRotateCompressed.js"></script>
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>-->
+        <script src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js" integrity="sha384-3LK/3kTpDE/Pkp8gTNp2gR/2gOiwQ6QaO7Td0zV76UFJVhqLl4Vl3KL1We6q6wR9" crossorigin="anonymous"></script>
         <script src="{{ asset('js/selectize.min.js') }}"></script>
+        <script src="{{ asset('js/summernote-bs4.js') }}"></script>
+        <script src="{{ asset('js/summernote-pt-BR.js') }}"></script>
     <script>
         $(document).ready(function ($) {
             $('.selectable').selectize();
+            $('.summernote').summernote({
+                lang: 'pt-BR' // default: 'en-US'
+            });
+        });
+        $(function () {
+            $('[data-toggle="popover"]').popover({
+                html: true,
+                trigger: 'focus'
+            });
         });
     </script>
         <!-- Fonts -->
@@ -29,8 +50,10 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
         <!-- Styles -->
+        <link href="https://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link href="{{ asset('css/selectize.bootstrap3.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/summernote-bs4.css') }}" rel="stylesheet">
     </head>
     <body>
         <div id="app">
@@ -48,15 +71,31 @@
                         <!-- Left Side Of Navbar -->
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Análises</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{{ url('/analise/projetos')}}">Projetos</a>
+                                    <a class="dropdown-item" href="{{ url('/analise/relatorios')}}">Relatórios</a>
+                                    @if(!is_null($nivel))
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url('/analise/sistema')}}">Disciplinas</a>
+                                    <a class="dropdown-item" href="{{ url('/analise/item')}}">Itens de Checklist</a>
+                                    <a class="dropdown-item" href="{{ url('/analise/obs')}}">Observações de Análise</a>
+                                    @endif
+                                </div>
+                            </li>
+                            @if(!is_null($nivel))
+                            <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Configurações</a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="{{ url('/empresas')}}">Empresas</a>
                                     <a class="dropdown-item" href="{{ url('/shoppings')}}">Shoppings</a>
                                     <a class="dropdown-item" href="{{ url('/users')}}">Usuários</a>
+                                    <a class="dropdown-item" href="{{ url('/funcionarios')}}">Funcionários</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#">Separated link</a>
                                 </div>
                             </li>
+                            @endif
                         </ul>
 
                         <!-- Right Side Of Navbar -->
@@ -78,6 +117,9 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ url('cadastro') }}">
+                                       Dados cadastrais
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
     document.getElementById('logout-form').submit();">

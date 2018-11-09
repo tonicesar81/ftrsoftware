@@ -15,7 +15,7 @@ class CreateProjetosArquivosTable extends Migration {
         Schema::create('projetos_arquivos', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('projetos_id')->unsigned();
-            $table->integer('tipo_relatorios_id')->unsigned();
+            
             $table->string('filename');
             $table->string('filepath');
             $table->integer('memorial')->nullable();
@@ -24,7 +24,7 @@ class CreateProjetosArquivosTable extends Migration {
 
         Schema::table('projetos_arquivos', function($table) {
             $table->foreign('projetos_id')->references('id')->on('projetos')->onDelete('cascade');
-            $table->foreign('tipo_relatorios_id')->references('id')->on('tipo_relatorios')->onDelete('cascade');
+            
         });
     }
 

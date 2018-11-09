@@ -1,3 +1,12 @@
+<?php
+$current = url()->current();
+$arr_route = explode('/', $current);
+$action = 'UsersController@pesquisa';
+if(in_array('funcionarios',$arr_route)){
+    $action = 'UsersController@pesquisaFuncionario';
+   
+}
+?>
 @extends('layouts.app')
 @section('content')
 
@@ -20,7 +29,7 @@
                     <a class="btn btn-primary" href="{{url('/users/create')}}" role="button">+ Novo usuário</a>
                 </div>
                 <div class="col-md-4">
-                    {!! Form::open(['action' => 'UsersController@pesquisa']) !!}
+                    {!! Form::open(['action' => $action]) !!}
                     <div class="form-row">
                         <div class="form-group col-10">
                             {!! Form::text('pesquisa', null, ['class' => 'form-control', 'placeholder' => 'Pesquisar...']); !!}
@@ -43,8 +52,13 @@
                     <tr class="bg-primary text-white">
                         <th scope="col" >Cód.</th>
                         <th scope="col" >Nome</th>
+                        <th scope="col" >Usuário</th>
+                        <th scope="col" >E-mail</th>
+                        @if(!in_array('funcionarios',$arr_route))
                         <th scope="col" >Shopping(s)</th>
+                        @else
                         <th scope="col" >Perfil</th>
+                        @endif
                         <th scope="col" >Data de Cadastro</th>
                         <th scope="col"></th>
                     </tr>
@@ -54,13 +68,19 @@
                     <tr>
                         <td>{{$user->id}}</td>
                         <td>{{$user->name}}</td>
-                        <td>
+                        <td>{{$user->username}}</td>
+                        <td>{{$user->email}}</td>
+                       @if(!in_array('funcionarios',$arr_route)) 
+                        <td>                            
                             @foreach($user->shoppings as $s)
                             <span class="badge badge-primary">{{ $s->shopping }}</span>
-                            @endforeach
+                            @endforeach                            
                         </td>
-
-                        <td></td>
+                        @else
+                        <td>                            
+                            {{$user->nivel}}                            
+                        </td>
+                        @endif
                         <td>{{ date('d/m/Y', strtotime($user->created_at)) }}</td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Basic example">
