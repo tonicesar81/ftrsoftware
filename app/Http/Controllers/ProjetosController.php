@@ -186,16 +186,17 @@ class ProjetosController extends Controller {
 //        WHERE d.tipo_relatorios_id = 7
         $emails = DB::Table('users_disciplinas as d')
                 ->join('users as u', 'd.users_id', '=', 'u.id')
+                ->select('u.name', 'u.email')
                 ->where('d.tipo_relatorios_id', $request->tipo_relatorios)
-                ->pluck('u.email');
+                ->get();
 //        try{
 //            Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
 //        } catch (\Exception $e) {
 //            return redirect('analise/projetos/create')->with('message', 'Projeto adicionado para análise com sucesso.');
 //        }
 //        return var_dump($emails);
-//        Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
-        Mail::to(['rj.toni@hotmail.com'])->send(new NewProjeto($shopping,$request->loja));
+        Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
+//        Mail::to(['rj.toni@hotmail.com'])->send(new NewProjeto($shopping,$request->loja));
         //analise01@ftrengenhariarj.com.br
         
         return redirect('analise/projetos/create')->with('message', 'Projeto adicionado para análise com sucesso.');
