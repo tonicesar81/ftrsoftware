@@ -193,9 +193,9 @@ class ProjetosController extends Controller {
 //        } catch (\Exception $e) {
 //            return redirect('analise/projetos/create')->with('message', 'Projeto adicionado para análise com sucesso.');
 //        }
-        return var_dump($emails);
-        Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
-//        Mail::to(['analise01@ftrengenhariarj.com.br'])->send(new NewProjeto($shopping,$request->loja));
+//        return var_dump($emails);
+//        Mail::to($emails)->send(new NewProjeto($shopping,$request->loja));
+        Mail::to(['rj.toni@hotmail.com'])->send(new NewProjeto($shopping,$request->loja));
         //analise01@ftrengenhariarj.com.br
         
         return redirect('analise/projetos/create')->with('message', 'Projeto adicionado para análise com sucesso.');
