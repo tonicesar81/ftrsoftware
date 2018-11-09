@@ -184,7 +184,7 @@ class ProjetosController extends Controller {
 //        INNER JOIN users AS u ON d.users_id = u.id
 //        WHERE d.tipo_relatorios_id = 7
         $emails = DB::Table('users_disciplinas as d')
-                ->join('users ss u', 'd.users_id', '=', 'u.id')
+                ->join('users as u', 'd.users_id', '=', 'u.id')
                 ->where('d.tipo_relatorios_id', $request->tipo_relatorios)
                 ->pluck('u.email');
         try{
