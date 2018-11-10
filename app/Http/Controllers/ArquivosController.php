@@ -71,12 +71,12 @@ class ArquivosController extends Controller {
         foreach($this->getShoppings_id() as $s){
             $sh_array[] = $s->shoppings_id;
         }
-        
+        $shops = implode(',', $sh_array);
         if (is_null($this->nivel())) {
             $pastas = DB::table('shoppings')
                     ->leftJoin('arquivos', 'arquivos.shoppings_id', '=', 'shoppings.id')
                     ->select(DB::raw('shoppings.id,shoppings.shopping,(SELECT COUNT(DISTINCT loja) FROM arquivos WHERE arquivos.shoppings_id = shoppings.id) AS lojas, (SELECT created_at FROM arquivos WHERE shoppings_id = shoppings.id ORDER BY created_at DESC LIMIT 0,1) AS created_at'))
-                    ->whereRaw('(SELECT COUNT(DISTINCT loja) FROM arquivos WHERE arquivos.shoppings_id = shoppings.id) > 0 AND arquivos.shoppings_id IN (' . implode(',', $sh_array) . ')')
+                    ->whereRaw('(SELECT COUNT(DISTINCT loja) FROM arquivos WHERE arquivos.shoppings_id = shoppings.id) > 0 AND arquivos.shoppings_id IN (' . $shops . ')')
                     ->groupby('shopping')
                     ->orderby('created_at', 'DESC')
                     ->get();
