@@ -10,6 +10,13 @@
         </button>
     </div>   
     @endif
+    <div class="card">
+  <div class="card-header">
+    Itens
+  </div>
+  <div class="card-body">
+      <a class="btn btn-primary" href="{{url('/analise/item/create')}}" role="button">Criar item</a>
+      <hr>
     <table class="table table-bordered table-sm">
         <thead>
         <th>Tipo de relatório</th>
@@ -34,5 +41,7 @@
             @endforeach
         </tbody>
     </table>
+  </div>
+    </div>
 </div>
 @endsection

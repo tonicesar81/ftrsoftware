@@ -1,9 +1,6 @@
 @extends('layouts.app')
 @section('content')
 
-
-    
-  
 <div class="container">
     @if(session('message'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -15,7 +12,7 @@
     @endif
     <div class="card">
   <div class="card-header">
-    Relatórios
+    Arquivos de referência aprovados
   </div>
   <div class="card-body">
     <div class="row">
@@ -24,7 +21,7 @@
                 <select class="form-control" id="select-shopping" onchange="if (this.value) window.location.href=this.value">
                     <option value="">Escolha um shopping</option>
                     @foreach($shoppings as $shopping)
-                    <option value="{{ url('/analise/relatorios/'.$shopping->id) }}">{{$shopping->shopping}}</option>
+                    <option value="{{ url('/arquivos/'.$shopping->id) }}">{{$shopping->shopping}}</option>
                     @endforeach
                 </select>
             </div>
@@ -35,7 +32,7 @@
             @endif
             @if($pastas->isEmpty())
             <div class="alert alert-info" role="alert">
-                Não há relatórios disponíveis
+                Não há arquivos disponíveis
             </div>
             @else
             <table class="table table-bordered table-hover table-sm">
@@ -47,9 +44,9 @@
                 <tbody>
                     @foreach($pastas as $pasta)
                     <tr>
-                        <td><a href="{{ url('/analise/relatorios/'.$pasta->id) }}" ><i class="fas fa-folder"></i> {{ $pasta->shopping }}</a></td>
+                        <td><a href="{{ url('/arquivos/'.$pasta->id) }}" ><i class="fas fa-folder"></i> {{ $pasta->shopping }}</a></td>
                         <td>{{ $pasta->lojas }}</td>
-                        <td>{{ date('d/m/Y - H:i:s', strtotime($pasta->updated_at.' -3 hours')) }}</td>
+                        <td>{{ date('d/m/Y - H:i:s', strtotime($pasta->created_at.' -3 hours')) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -57,7 +54,7 @@
             @endif
         </div>
     </div>
-      </div>
-</div>
+  </div>
+    </div>
 </div>
 @endsection

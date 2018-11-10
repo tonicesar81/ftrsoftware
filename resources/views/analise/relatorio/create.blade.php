@@ -68,7 +68,11 @@ foreach ($tipo_relatorios as $t) {
         </ul>
     </div>
     @endif
-
+<div class="card">
+  <div class="card-header">
+    Relatórios
+  </div>
+  <div class="card-body">
     {!! Form::open(['action' => 'RelatoriosController@store']) !!}
     <div class="form-row">
         <div class="form-group col-4">
@@ -126,14 +130,18 @@ foreach ($tipo_relatorios as $t) {
                             <div id='{{$item->id}}' class="bg-obs d-none">
                                 @foreach($item->obs as $ob)
                                 <div class="form-check">
-                                    {!! Form::checkbox('obs[]', $ob->id, false, ['class' => 'form-check-input'])!!}
+                                    {!! Form::checkbox('obs[]', $ob->id, false, ['class' => 'form-check-input', 'onclick' => 'mostraFigura("#obs-fig-'.$ob->id.'")'])!!}
                                     {!! Form::label('obs', $ob->lista_analise, ['class' => 'form-check-label']) !!}
-                                    {!! Form::button('+ Figura', ['class' => 'btn btn-primary btn-sm', 'data-toggle' => 'modal', 'data-target' => '#exampleModal', 'onClick' => 'figuraObs('.$ob->id.')']); !!}
-                                    <div id='figuras-{{$ob->id}}'>
-                                        @if($ob->figura != '')
-                                        <img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' >
-                                        {!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}
-                                        @endif
+                                    <div id="obs-fig-{{$ob->id}}" class="border border-primary d-none">
+                                        
+                                        {!! Form::button('+ Figura', ['class' => 'btn btn-primary btn-sm', 'data-toggle' => 'modal', 'data-target' => '#exampleModal', 'onClick' => 'figuraObs('.$ob->id.')']); !!}
+                                        <hr>
+                                        <div class="px-1" id='figuras-{{$ob->id}}'>
+                                            @if($ob->figura != '')
+                                            <img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' >
+                                            {!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 @endforeach
@@ -221,6 +229,8 @@ foreach ($tipo_relatorios as $t) {
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 @if($projeto->tipo_relatorios_id == 3)
 <script>
@@ -475,8 +485,9 @@ foreach ($tipo_relatorios as $t) {
             if(comm){
                 seletor = 'c-figuras-';
             }
-            $('#'+seletor+analise).append('<img src="'+data+'" style="max-width:100px;max-height:50px;" />');
-            $('#'+seletor+analise).append('<input name="'+seletor+analise+'[]" type="hidden" value="'+data+'">');
+            $('#'+seletor+analise).append('<div style="float:left;cursor:pointer;"><img src="'+data+'" style="max-width:100px;max-height:50px;" title="Clique na imagem para apagar" onclick="$(this).parent().remove();" /><input name="'+seletor+analise+'[]" type="hidden" value="'+data+'"></div>')
+//            $('#'+seletor+analise).append('<img src="'+data+'" style="max-width:100px;max-height:50px;" />');
+//            $('#'+seletor+analise).append('<input name="'+seletor+analise+'[]" type="hidden" value="'+data+'">');
             console.log(data);
             $('#exampleModal').modal('hide');
             //$('#figura').val('teste');
@@ -498,7 +509,9 @@ foreach ($tipo_relatorios as $t) {
         $('#dragThis').append('<a class="btn btn-outline-primary btn-sm" href="#" role="button" onclick="$(this).parent().remove()" data-html2canvas-ignore="true">X</a>');
         $(".dragg").draggable({containment: "#figPrev", scroll: false});
     }
-
+    function mostraFigura(id){
+        $( id ).toggleClass( "d-none" );
+    }
 
 
 </script>

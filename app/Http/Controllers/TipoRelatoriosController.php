@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Tipo_relatorios;
 use App\Itens;
+use App\Grupos;
 
 class TipoRelatoriosController extends Controller {
 
@@ -29,7 +30,11 @@ class TipoRelatoriosController extends Controller {
     public function index() {
         //
         $this->permission();
-        $tipo_relatorios = Tipo_relatorios::all();
+//        $tipo_relatorios = Tipo_relatorios::all();
+        $tipo_relatorios = DB::table('tipo_relatorios as t')
+                ->join('grupos as g', 'g.id', 't.grupos_id')
+                ->select('t.*', 'g.grupo')
+                ->get();
 
         return view('analise.sistema.index', ['tipo_relatorios' => $tipo_relatorios]);
     }
@@ -42,7 +47,8 @@ class TipoRelatoriosController extends Controller {
     public function create() {
         //
         $this->permission();
-        return view('analise.sistema.create');
+        $grupos = Grupos::all();
+        return view('analise.sistema.create',['grupos' => $grupos]);
     }
 
     /**
@@ -59,6 +65,7 @@ class TipoRelatoriosController extends Controller {
         ]);
         $tipo_relatorios = new Tipo_relatorios;
         $tipo_relatorios->tipo_relatorio = $request->tipo_relatorio;
+        $tipo_relatorios->grupos_id = $request->grupos_id;
         if(!$request->filled('ref')){
             $tipo_relatorios->ref = strtoupper(substr($request->tipo_relatorio, 0, 3));
         }else{
@@ -90,8 +97,8 @@ class TipoRelatoriosController extends Controller {
         //
         $this->permission();
         $tipo_relatorios = Tipo_relatorios::find($id);
-
-        return view('analise.sistema.edit', ['tipo_relatorios' => $tipo_relatorios]);
+        $grupos = Grupos::all();
+        return view('analise.sistema.edit', ['tipo_relatorios' => $tipo_relatorios, 'grupos' => $grupos]);
     }
 
     /**

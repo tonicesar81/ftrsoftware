@@ -1,9 +1,6 @@
 @extends('layouts.app')
 @section('content')
 
-
-    
-  
 <div class="container">
     @if(session('message'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -15,7 +12,7 @@
     @endif
     <div class="card">
   <div class="card-header">
-    Relatórios
+    Arquivos de referência aprovados
   </div>
   <div class="card-body">
     <div class="row">
@@ -24,32 +21,31 @@
                 <select class="form-control" id="select-shopping" onchange="if (this.value) window.location.href=this.value">
                     <option value="">Escolha um shopping</option>
                     @foreach($shoppings as $shopping)
-                    <option value="{{ url('/analise/relatorios/'.$shopping->id) }}">{{$shopping->shopping}}</option>
+                    <option value="{{ url('/arquivos/'.$shopping->id) }}">{{$shopping->shopping}}</option>
                     @endforeach
                 </select>
             </div>
         </div>
         <div class="col-12">
-            @if(isset($shopping_select))
-            <h5>{{ $shopping_select->shopping }}</h5>
-            @endif
-            @if($pastas->isEmpty())
+            <h6><a href="{{ url('/arquivos/') }}"><i class="fas fa-home"></i></a> > <i class="fas fa-folder-open"></i> {{ $shopping_select }}</h6>
+            
+            @if($subpastas->isEmpty())
             <div class="alert alert-info" role="alert">
-                Não há relatórios disponíveis
+                Não há arquivos disponíveis
             </div>
             @else
             <table class="table table-bordered table-hover table-sm">
                 <thead>
-                <th>Shopping</th>
-                <th>Nº Lojas</th>
+                <th>Loja</th>
+                <th>Nº Arquivos</th>
                 <th>ùltima modificação</th>
                 </thead>
                 <tbody>
-                    @foreach($pastas as $pasta)
+                    @foreach($subpastas as $subpasta)
                     <tr>
-                        <td><a href="{{ url('/analise/relatorios/'.$pasta->id) }}" ><i class="fas fa-folder"></i> {{ $pasta->shopping }}</a></td>
-                        <td>{{ $pasta->lojas }}</td>
-                        <td>{{ date('d/m/Y - H:i:s', strtotime($pasta->updated_at.' -3 hours')) }}</td>
+                        <td><a href="{{ url('/arquivos/'.$subpasta->shoppings_id.'/'.$subpasta->id) }}"><i class="fas fa-folder"></i> {{ $subpasta->loja }}</a></td>
+                        <td>{{ $subpasta->arq }}</td>
+                        <td>{{ date('d/m/Y - H:i:s', strtotime($subpasta->created_at.' -3 hours')) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -57,7 +53,7 @@
             @endif
         </div>
     </div>
-      </div>
-</div>
+  </div>
+    </div>
 </div>
 @endsection

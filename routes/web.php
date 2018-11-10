@@ -64,6 +64,16 @@ Route::get('analise/projetos/download/{id}', 'ProjetosController@download');
 Route::get('analise/projetos/revisao/{id}', 'ProjetosController@revisao');
 Route::put('analise/projetos/revisao/{id}', 'ProjetosController@storeRevisao');
 
+Route::resource('analise/grupos', 'GruposController');
+Route::get('analise/grupos/edit/{id}', 'GruposController@edit');
+
+Route::resource('analise/normas', 'NormasController');
+Route::get('analise/normas/edit/{id}', 'NormasController@edit');
+
+Route::resource('arquivos', 'ArquivosController');
+Route::get('arquivos/download/{id}', 'ArquivosController@download');
+Route::get('arquivos/{id}/{loja}', 'ArquivosController@lista');
+
 Route::resource('textos', 'ObjetivosController');
 
 //Route::get('projetos/addFile/{id}', 'ProjetosController@addFile');

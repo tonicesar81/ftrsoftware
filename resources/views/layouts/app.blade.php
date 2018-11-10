@@ -75,11 +75,15 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="{{ url('/analise/projetos')}}">Projetos</a>
                                     <a class="dropdown-item" href="{{ url('/analise/relatorios')}}">Relatórios</a>
+                                    <a class="dropdown-item" href="{{ url('arquivos')}}">Arquivos</a>
                                     @if(!is_null($nivel))
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ url('/analise/sistema')}}">Disciplinas</a>
                                     <a class="dropdown-item" href="{{ url('/analise/item')}}">Itens de Checklist</a>
                                     <a class="dropdown-item" href="{{ url('/analise/obs')}}">Observações de Análise</a>
+                                    <a class="dropdown-item" href="{{ url('/analise/grupos')}}">Grupos de disciplinas</a>
+                                    <a class="dropdown-item" href="{{ url('/analise/normas')}}">Normas</a>
+                                    <a class="dropdown-item" href="{{ url('textos/create')}}">Textos padrão</a>
                                     @endif
                                 </div>
                             </li>

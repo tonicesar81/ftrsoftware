@@ -19,6 +19,11 @@
         </ul>
     </div>
     @endif
+    <div class="card">
+  <div class="card-header">
+    Textos padrão para relatórios
+  </div>
+  <div class="card-body">
     {!! Form::open(['action' => 'ObjetivosController@store']) !!}
     <div class="form-row">
         <div class="alert alert-warning">
@@ -42,5 +47,7 @@
         </div>
     </div>
     {!! Form::close() !!}
+</div>
+    </div>
 </div>
 @endsection

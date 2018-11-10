@@ -115,7 +115,7 @@ if(isset($tipo_relatorios)){
                 @endif
                 <div class="form-group col-12">
                     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']); !!}
-                    <a class="btn btn-secondary" href="{{url('/users')}}" role="button">Voltar</a>
+                    <!--<a class="btn btn-secondary" href="{{url('/users')}}" role="button">Voltar</a>-->
                 </div>
             </div>
             {!! Form::close() !!}

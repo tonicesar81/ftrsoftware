@@ -1,11 +1,6 @@
 @extends('layouts.app')
 @section('content')
 
-<?php
-foreach ($tipo_relatorios as $t) {
-    $tipo_relatorio[$t->id] = $t->tipo_relatorio;
-}
-?>
 <div class="container">
     @if ($errors->any())
     <div class="alert alert-danger">
@@ -18,18 +13,21 @@ foreach ($tipo_relatorios as $t) {
     @endif
     <div class="card">
   <div class="card-header">
-    Itens
+    Grupos
   </div>
   <div class="card-body">
-    {!! Form::open(['action' => ['ItensController@update', $itens->id], 'method' => 'put' ]) !!}
+    {!! Form::open(['action' => ['GruposController@update' , $grupos->id], 'method' => 'put' ]) !!}
     <div class="form-row">
         <div class="form-group col-6">
-            {!! Form::label('tipo_relatorios_id', 'Tipo de relatório') !!}
-            {!! Form::select('tipo_relatorios_id',$tipo_relatorio ,$itens->tipo_relatorios_id, ['class' => 'form-control']) !!}
+            {!! Form::label('grupo', 'Nome do grupo') !!}
+            {!! Form::text('grupo',$grupos->grupo ,['class' => 'form-control']) !!}
         </div>
-        <div class="form-group col-6">
-            {!! Form::label('item', 'Item') !!}
-            {!! Form::text('item', $itens->item, ['class' => 'form-control']) !!}
+         <div class="form-group col-6">
+            {!! Form::label('abrev', 'Abreviatura do grupo') !!}
+            {!! Form::text('abrev',$grupos->abrev ,['class' => 'form-control text-uppercase']) !!}
+            <small id="inputHelpBlock" class="form-text text-muted">
+                Se nenhum valor for informado, o nome será os 3(três) primeiros caracteres do nome do grupo
+            </small>
         </div>
         <div class="form-group col-12">
             {!! Form::submit('Salvar', ['class' => 'btn btn-primary']); !!}

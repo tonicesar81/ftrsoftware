@@ -17,7 +17,7 @@ class ObjetivosController extends Controller
     }
     public function __construct() {
         $this->middleware('auth');
-        $this->permission();
+        
     }
     
     /**
@@ -40,6 +40,7 @@ class ObjetivosController extends Controller
     public function create()
     {
         //
+        $this->permission();
         $objetivos = DB::table('objetivos')
                 ->select('*')
                 ->first();
@@ -55,6 +56,7 @@ class ObjetivosController extends Controller
     public function store(Request $request)
     {
         //
+        $this->permission();
         $objetivo = $request->objetivo;
         $detalhamento = $request->detalhamento;
         $consideracao = $request->consideracao;
@@ -103,6 +105,7 @@ class ObjetivosController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $this->permission();
     }
 
     /**
@@ -114,5 +117,6 @@ class ObjetivosController extends Controller
     public function destroy($id)
     {
         //
+        $this->permission();
     }
 }

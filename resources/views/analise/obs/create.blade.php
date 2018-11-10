@@ -16,6 +16,11 @@ foreach ($itens as $i) {
         </ul>
     </div>
     @endif
+    <div class="card">
+  <div class="card-header">
+    Observações
+  </div>
+  <div class="card-body">
     {!! Form::open(['action' => 'ListaAnalisesController@store', 'files' => true]) !!}
     <div class="form-row">
         <div class="form-group col-6">
@@ -35,5 +40,7 @@ foreach ($itens as $i) {
         </div>
     </div>
     {!! Form::close() !!}
+</div>
+    </div>
 </div>
 @endsection

@@ -71,7 +71,11 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
         </ul>
     </div>
     @endif
-
+<div class="card">
+  <div class="card-header">
+    Relatórios
+  </div>
+  <div class="card-body">
     {!! Form::open(['action' => ['RelatoriosController@'.$action, $relatorio->id], 'method' => 'put']) !!}
     <div class="form-row">
         <div class="form-group col-4">
@@ -143,28 +147,36 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
                                 $check = (in_array($ob->id,$analise))? true : false;
                                 @endphp
                                 <div class="form-check">
-                                {!! Form::checkbox('obs[]', $ob->id, $check, ['class' => 'form-check-input'])!!}
+                                {!! Form::checkbox('obs[]', $ob->id, $check, ['class' => 'form-check-input', 'onclick' => 'mostraFigura("#obs-fig-'.$ob->id.'")'])!!}
                                 {!! Form::label('obs', $ob->lista_analise, ['class' => 'form-check-label']) !!}
-                                {!! Form::button('+ Figura', ['class' => 'btn btn-primary btn-sm', 'data-toggle' => 'modal', 'data-target' => '#exampleModal', 'onClick' => 'figuraObs('.$ob->id.')']); !!}
-                                    <div id='figuras-{{$ob->id}}'>
-                                        @if(($ob->figura != '') && ($action != 'update'))
-                                        <img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' >
-                                        {!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}
-                                        @endif
-                                        @if((empty($ob->figuras)) && ($ob->figura != '') && ($action == 'update'))
-                                        <img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' >
-                                        {!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}
-                                        @endif
-                                        @if($action == 'update')
-                                        @foreach($ob->figuras as $fg)
-                                        @if($ob->figura != $fg->figura)
-                                        <!--<img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' >-->
-                                        <!--{!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}-->
-                                        @endif
-                                        <img src='{{ asset('storage/'.$fg->figura) }}' style='max-width:100px;max-height:50px;' >
-                                        {!! Form::hidden('figuras-'.$ob->id.'[]',  $fg->figura) !!}
-                                        @endforeach
-                                        @endif
+                                    <div id="obs-fig-{{$ob->id}}" class="border border-primary {{ (!$check)? 'd-none' : ''}}">
+                                    {!! Form::button('+ Figura', ['class' => 'btn btn-primary btn-sm', 'data-toggle' => 'modal', 'data-target' => '#exampleModal', 'onClick' => 'figuraObs('.$ob->id.')']); !!}
+                                        <div id='figuras-{{$ob->id}}'>
+                                            @if(($ob->figura != '') && ($action != 'update'))
+                                            <div style="float:left;cursor:pointer;">
+                                                <img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' title="Clique na imagem para apagar" onclick="$(this).parent().remove();" >
+                                                {!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}
+                                            </div>
+                                            @endif
+                                            @if((empty($ob->figuras)) && ($ob->figura != '') && ($action == 'update'))
+                                            <div style="float:left;cursor:pointer;">
+                                                <img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' title="Clique na imagem para apagar" onclick="$(this).parent().remove();" >
+                                                {!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}
+                                            </div>
+                                            @endif
+                                            @if($action == 'update')
+                                            @foreach($ob->figuras as $fg)
+                                            @if($ob->figura != $fg->figura)
+                                            <!--<img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' >-->
+                                            <!--{!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}-->
+                                            @endif
+                                            <div style="float:left;cursor:pointer;">
+                                                <img src='{{ asset('storage/'.$fg->figura) }}' style='max-width:100px;max-height:50px;' title="Clique na imagem para apagar" onclick="$(this).parent().remove();" >
+                                                {!! Form::hidden('figuras-'.$ob->id.'[]',  $fg->figura) !!}
+                                            </div>
+                                            @endforeach
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 @endforeach
@@ -221,6 +233,8 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
         </div>
     </div>
     {!! Form::close() !!}
+  </div>
+</div>
 </div>
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -513,7 +527,9 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
         $('#dragThis').append('<a class="btn btn-outline-primary btn-sm" href="#" role="button" onclick="$(this).parent().remove()" data-html2canvas-ignore="true">X</a>');
         $(".dragg").draggable({containment: "#figPrev", scroll: false});
     }
-
+    function mostraFigura(id){
+        $( id ).toggleClass( "d-none" );
+    }
 
 
 </script>

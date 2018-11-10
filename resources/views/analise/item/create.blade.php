@@ -16,6 +16,11 @@ foreach ($tipo_relatorios as $t) {
         </ul>
     </div>
     @endif
+    <div class="card">
+  <div class="card-header">
+    Itens
+  </div>
+  <div class="card-body">
     {!! Form::open(['action' => 'ItensController@store']) !!}
     <div class="form-row">
         <div class="form-group col-6">
@@ -31,5 +36,7 @@ foreach ($tipo_relatorios as $t) {
         </div>
     </div>
     {!! Form::close() !!}
+  </div>
+    </div>
 </div>
 @endsection
