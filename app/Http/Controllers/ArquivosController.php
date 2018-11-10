@@ -212,7 +212,7 @@ class ArquivosController extends Controller {
         $shoppings = $this->getShoppings_id();
         $my_shoppings = array();
         foreach($shoppings as $shop){
-            $my_shoppings[] = $shop->shoppings_id;
+            $my_shoppings[] = $shop->id;
         }
         if((is_null($this->nivel())) && (!in_array($id, $my_shoppings))){
             abort(403);
@@ -237,7 +237,7 @@ class ArquivosController extends Controller {
         $shoppings = $this->getShoppings_id();
         $my_shoppings = array();
         foreach($shoppings as $shop){
-            $my_shoppings[] = $shop->shoppings_id;
+            $my_shoppings[] = $shop->id;
         }
         if((is_null($this->nivel())) && (!in_array($id, $my_shoppings))){
             abort(403);
