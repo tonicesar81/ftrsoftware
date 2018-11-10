@@ -34,7 +34,7 @@ class ArquivosController extends Controller {
     }
     
     private function getShoppings_id() {
-        $shoppings = Shopping::whereIn('id', DB::table('users_shoppings')->where('users_id', Auth::id())->get()->pluck('shoppings_id'))->get();
+        $shoppings = Shopping::whereIn('id', DB::table('users_shoppings')->where('users_id', Auth::id())->pluck('shoppings_id'))->get();
 
         return $shoppings;
     }
@@ -69,8 +69,9 @@ class ArquivosController extends Controller {
         
         $sh_array = array();
         foreach($this->getShoppings_id() as $s){
-            $sh_array[] = $s->shoppings_id;
+            $sh_array[] = $s->id;
         }
+//        return var_dump($sh_array);
         $shops = implode(',', $sh_array);
         if (is_null($this->nivel())) {
             $pastas = DB::table('shoppings')
