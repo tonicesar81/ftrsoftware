@@ -15,6 +15,10 @@
     Arquivos de referência aprovados
   </div>
   <div class="card-body">
+      @if(!is_null($nivel))
+            <a class="btn btn-primary" href="{{url('/arquivos/create')}}" role="button">Inserir novo arquivo</a>
+            <hr>
+            @endif
     <div class="row">
         <div class="col-6">
             <div class="form-group">

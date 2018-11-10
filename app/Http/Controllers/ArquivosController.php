@@ -89,7 +89,7 @@ class ArquivosController extends Controller {
                     ->orderby('created_at', 'DESC')
                     ->get();
         }
-        return view('arquivos.pastas', ['pastas' => $pastas, 'shoppings' => $shoppings]);
+        return view('arquivos.pastas', ['pastas' => $pastas, 'shoppings' => $shoppings, 'nivel' => $this->nivel()]);
     }
 
     /**
@@ -226,7 +226,7 @@ class ArquivosController extends Controller {
                 ->groupby('ar.loja')
                 ->orderby('created_at', 'desc')
                 ->get();
-        return view('arquivos.subpastas', ['subpastas' => $subpastas, 'shoppings' => $shoppings, 'shopping_select' => $shopping_select]);
+        return view('arquivos.subpastas', ['subpastas' => $subpastas, 'shoppings' => $shoppings, 'shopping_select' => $shopping_select, 'nivel' => $this->nivel()]);
     }
 
     public function lista($id, $loja) {
@@ -256,7 +256,8 @@ class ArquivosController extends Controller {
             'arquivos' => $arquivos,
             'shoppings' => $this->getShoppings(),
             'shopping_select' => $shopping_select,
-            'loja' => $loja
+            'loja' => $loja,
+            'nivel' => $this->nivel()
         );
 
         return view('arquivos.index', $array);

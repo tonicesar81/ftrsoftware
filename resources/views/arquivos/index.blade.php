@@ -15,6 +15,10 @@
     Arquivos de referência aprovados
   </div>
   <div class="card-body">
+      @if(!is_null($nivel))
+            <a class="btn btn-primary" href="{{url('/arquivos/create')}}" role="button">Inserir novo arquivo</a>
+            <hr>
+            @endif
     <div class="row">
         <div class="col-6">
             <div class="form-group">
@@ -27,6 +31,7 @@
             </div>
         </div>
         <div class="col-12">
+            
             @if(isset($shopping_select))
             <h6><a href="{{ url('/arquivos/') }}"><i class="fas fa-home"></i></a> > <a href="{{ url('/arquivos/'.$shopping_select->id) }}"><i class="fas fa-folder-open"></i> {{ $shopping_select->shopping }}</a> > <i class="fas fa-folder-open"></i> {{ $loja }}</h6>
             @endif
