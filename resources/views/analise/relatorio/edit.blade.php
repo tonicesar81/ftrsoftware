@@ -75,6 +75,17 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
   <div class="card-header">
     Relatórios
   </div>
+    @php
+    if(isset($projeto_arquivos)){
+        $p_array = array();
+        foreach($projeto_arquivos as $arq){
+            if(is_null($arq->memorial)){
+                $p_array[] = $arq->filename;
+            }
+        }
+        $arquivos = implode(' / ', $p_array);
+    }
+    @endphp
   <div class="card-body">
     {!! Form::open(['action' => ['RelatoriosController@'.$action, $relatorio->id], 'method' => 'put']) !!}
     <div class="form-row">
@@ -88,7 +99,7 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
         </div>
         <div class="form-group col-4">
             {!! Form::label('id_arquivo', 'Identificação do arquivo') !!}
-            {!! Form::text('id_arquivo', $relatorio->id_arquivo, ['class' => 'form-control']) !!}
+            {!! Form::text('id_arquivo', (isset($arquivos)) ? $arquivos : $relatorio->id_arquivo, ['class' => 'form-control']) !!}
         </div>
         <div class="alert alert-warning">
             DICA: Utilize as seguintes variáveis padrões se achar necessário. Atenção! A seguinte regra precisa ser obedecida ( Em maiúsculo e entre chaves {DISCIPLINA}, {LOJA}, {SHOPPING}, {EMPRESA} )
@@ -96,14 +107,6 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
         <div class="form-group col-12">
             {!! Form::label('objetivo', 'Objetivo') !!}
             {!! Form::textarea('objetivo',$objetivo ,['class' => 'form-control summernote']) !!}
-        </div>
-        <div class="form-group col-12">
-            {!! Form::label('detalhamento', 'Detalhamento') !!}
-            {!! Form::textarea('detalhamento',$detalhamento ,['class' => 'form-control summernote']) !!}
-        </div>
-        <div class="form-group col-12">
-            {!! Form::label('consideracao', 'Considerações Finais') !!}
-            {!! Form::textarea('consideracao',$consideracao ,['class' => 'form-control summernote']) !!}
         </div>
         <div class="form-group col-12">
             @php $n = 0; @endphp
@@ -203,7 +206,13 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
                     @endforeach
                 </tbody>
             </table>
-            
+            @php
+            $detarray = explode('{BARRA}', $relatorio->detalhamento);
+            @endphp
+            <div class="form-group col-12">
+                {!! Form::label('detalhamento', 'Detalhamento') !!}
+                {!! Form::textarea('detalhamento[]',$detarray[$n] ,['class' => 'form-control summernote']) !!}
+            </div> 
             @endforeach
             <div id="x-sys"></div>
             <div id="loader"></div>
@@ -226,6 +235,10 @@ $action = (!in_array('revisao',$array))? 'update' : 'saveRevisao';
                 {!! Form::checkbox('ressalva', '1', ($relatorio->ressalva == 1) ? true : false, ['class' => 'form-check-input'])!!}
                 {!! Form::label('ressalva', 'Aprovar com ressalva', ['class' => 'form-check-label']) !!}
             </div>
+        </div>
+        <div class="form-group col-12">
+            {!! Form::label('consideracao', 'Considerações Finais') !!}
+            {!! Form::textarea('consideracao',$consideracao ,['class' => 'form-control summernote']) !!}
         </div>
         <div class="form-group">
             {!! Form::hidden('projetos_id', $projeto_id, ['class' => 'form-control']) !!}

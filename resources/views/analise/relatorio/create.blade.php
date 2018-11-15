@@ -99,14 +99,7 @@ foreach ($tipo_relatorios as $t) {
             {!! Form::label('objetivo', 'Objetivo') !!}
             {!! Form::textarea('objetivo',$objetivos->objetivo ,['class' => 'form-control summernote']) !!}
         </div>
-        <div class="form-group col-12">
-            {!! Form::label('detalhamento', 'Detalhamento') !!}
-            {!! Form::textarea('detalhamento',$objetivos->detalhamento ,['class' => 'form-control summernote']) !!}
-        </div>
-        <div class="form-group col-12">
-            {!! Form::label('consideracao', 'Considerações Finais') !!}
-            {!! Form::textarea('consideracao',$objetivos->consideracao ,['class' => 'form-control summernote']) !!}
-        </div>
+               
         <div class="form-group col-12">
             <table class="table">
                 <thead>
@@ -161,6 +154,10 @@ foreach ($tipo_relatorios as $t) {
                     @endforeach
                 </tbody>
             </table>
+            <div class="form-group col-12">
+                {!! Form::label('detalhamento', 'Detalhamento') !!}
+                {!! Form::textarea('detalhamento[]',$tipo_r->detalhamento ,['class' => 'form-control summernote']) !!}
+            </div> 
             <div id="x-sys"></div>
             <div id="loader"></div>
             <hr />
@@ -182,6 +179,10 @@ foreach ($tipo_relatorios as $t) {
                 {!! Form::checkbox('ressalva', '1', false, ['class' => 'form-check-input'])!!}
                 {!! Form::label('ressalva', 'Aprovar com ressalva', ['class' => 'form-check-label']) !!}
             </div>
+        </div>
+        <div class="form-group col-12">
+            {!! Form::label('consideracao', 'Considerações Finais') !!}
+            {!! Form::textarea('consideracao',$objetivos->consideracao ,['class' => 'form-control summernote']) !!}
         </div>
         <div class="form-group col-12">
             {!! Form::hidden('projetos_id', $projeto->id, ['class' => 'form-control']) !!}

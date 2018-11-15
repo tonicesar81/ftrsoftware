@@ -38,3 +38,12 @@
         @endforeach
     </tbody>
 </table>
+<div class="form-group col-12">
+    {!! Form::label('detalhamento', 'Detalhamento') !!}
+    {!! Form::textarea('detalhamento[]',$tipo_r->detalhamento ,['class' => 'form-control summernote']) !!}
+</div> 
+<script>
+    $('.summernote').summernote({
+        lang: 'pt-BR' // default: 'en-US'
+    });
+</script>

@@ -71,6 +71,7 @@ class TipoRelatoriosController extends Controller {
         }else{
             $tipo_relatorios->ref = $request->ref;
         }
+        $tipo_relatorios->detalhamento = $request->detalhamento;
         $tipo_relatorios->save();
 
         return redirect('analise/sistema')->with('message', 'Novo tipo de relatório cadastrado no sistema');
@@ -123,7 +124,7 @@ class TipoRelatoriosController extends Controller {
         }else{
             $tipo_relatorios->ref = strtoupper($request->ref);
         }
-
+        $tipo_relatorios->detalhamento = $request->detalhamento;
         $tipo_relatorios->save();
 
         return redirect('analise/sistema')->with('message', 'Tipo de relatório alterado');

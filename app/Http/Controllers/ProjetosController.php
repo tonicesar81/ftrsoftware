@@ -147,19 +147,23 @@ class ProjetosController extends Controller {
             }
         }
 
-        foreach ($request->pdf as $pdf) {
-            if ($pdf->extension() != 'pdf') {
-                DB::table('projetos')->where('id', '=', $projeto->id)->delete();
-                return redirect('analise/projetos/create')->with('message', 'Formato de arquivo inválido');
-            } else {
-                $p = new ProjetosArquivos;
-                $p->projetos_id = $projeto->id;
-                $p->filename = $pdf->getClientOriginalName();
-                $path = $pdf->store('projetos');
-                $file = explode('/', $path)[1];
-                $p->filepath = $file;
-                $p->save();
+        if ($request->hasFile('dwg')) {
+            foreach ($request->pdf as $pdf) {
+                if ($pdf->extension() != 'pdf') {
+                    DB::table('projetos')->where('id', '=', $projeto->id)->delete();
+                    return redirect('analise/projetos/create')->with('message', 'Formato de arquivo inválido');
+                } else {
+                    $p = new ProjetosArquivos;
+                    $p->projetos_id = $projeto->id;
+                    $p->filename = $pdf->getClientOriginalName();
+                    $path = $pdf->store('projetos');
+                    $file = explode('/', $path)[1];
+                    $p->filepath = $file;
+                    $p->save();
+                }
             }
+        }else{
+            return redirect('analise/projetos/create')->with('message', 'Arquivo PDF obrigatório');
         }
         if ($request->hasFile('dwg')) {
             foreach ($request->dwg as $dwg) {
@@ -176,6 +180,8 @@ class ProjetosController extends Controller {
                     $p->save();
                 }
             }
+        }else{
+            return redirect('analise/projetos/create')->with('message', 'Arquivo DWG obrigatório');
         }
         
         //Logica para notificação por e-mail

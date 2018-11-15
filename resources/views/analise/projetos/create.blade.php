@@ -82,7 +82,7 @@ $tipo_relatorio = [
                     {!! Form::file('pdf[]', ['class' => 'form-control pdf', 'required' => true, 'onChange' => 'validate(this.value, \'pdf\')']); !!}
                     </div>
                     <div class="col-6">
-                    {!! Form::label('pdf', 'Versão em DWG') !!}
+                    {!! Form::label('pdf', 'Versão em DWG (Obrigatório)') !!}
                     {!! Form::file('dwg[]', ['class' => 'form-control dwg', 'onChange' => 'validate(this.value, \'dwg\')']); !!}
                     </div>
                     <div class="form-group col-8 offset-md-2">

@@ -164,14 +164,16 @@ and open the template in the editor.
                     
                 </tr>
                 <tr>
-                    <td class="" style='text-align:center;padding-top:30px;padding-bottom:30px;' >
+                    <td class="tb_borderless" >
+                        <div style='width:92%;text-align:center;padding-top:30px;padding-bottom:30px;' class="px-2 bordered border-dark" >
                         <h2>RELATÓRIO DE ANÁLISE DE PROJETO</h2>
                         <h2>{{ $disciplina }}</h2>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <td style='/*padding-top:210px;padding-bottom:100px;*/' class="tb_borderless">
-                        <div style='margin-top:50px;margin-bottom:50;padding:20px;background-color:#d9d9d9;' class="px-2 bordered border-dark bg-cliente">
+                        <div style='width:85%;margin-top:50px;margin-bottom:50;padding:20px;background-color:#d9d9d9;' class="px-2 bordered border-dark bg-cliente">
                             <h4>CLIENTE: {{ strtoupper($relatorio->empresa) }}</h4>
                             <h4>SHOPPING: {{ $relatorio->shopping }}</h4>
                             <h4>LOJA: {{$relatorio->loja}}</h4>
@@ -279,8 +281,10 @@ and open the template in the editor.
                             @php
                             $variaveis = array('{DISCIPLINA}', '{LOJA}', '{SHOPPING}', '{EMPRESA}');
                             $repor = array($refs[$n - 1], $relatorio->loja, $relatorio->shopping, $relatorio->empresa);
+                            $detarray = explode('{BARRA}',$detalhamento);
+                            $det = $detarray[$n];
                             @endphp
-                            {!! str_replace($variaveis, $repor, $detalhamento) !!}
+                            {!! str_replace($variaveis, $repor, $det) !!}
                         </p>
                     </td>
                 </tr>

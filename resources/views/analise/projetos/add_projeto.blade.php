@@ -31,7 +31,7 @@ foreach ($tipo_relatorios as $t) {
             {!! Form::file('projetos[\'pdf\'][]', ['class' => 'form-control pdf', 'onChange' => 'validate(this.value, \'pdf\')']); !!}
         </div>
         <div class="col-6">
-            {!! Form::label('pdf', 'Versão em DWG') !!}
+            {!! Form::label('pdf', 'Versão em DWG (Obrigatório)') !!}
             {!! Form::file('projetos[\'dwg\'][]', ['class' => 'form-control dwg', 'onChange' => 'validate(this.value, \'dwg\')']); !!}
         </div>
         <div class="form-group col-12">

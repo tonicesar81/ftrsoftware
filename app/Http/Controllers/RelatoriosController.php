@@ -238,11 +238,15 @@ class RelatoriosController extends Controller {
                 return $item;
             });
         }
+        $tipo_r = DB::table('tipo_relatorios')
+                ->where('id',$projeto->tipo_relatorios_id)
+                ->first();
         //$relatorios = Relatorios::where('id','=',$id)->first();
 //        $relatorios = DB::table('tipo_relatorios')->where('id', $id)->first();
         $arquivos = DB::table('projetos_arquivos')
                 ->where('projetos_id', $id)
                 ->whereNull('memorial')
+                ->where('filename', 'like', '%.dwg')
 //                ->where([
 //                    ['projetos_id', '=', $id],
 //                    ['memorial', '<>', 1],
@@ -256,6 +260,7 @@ class RelatoriosController extends Controller {
 //            'relatorio' => $relatorios,
             'objetivos' => Objetivos::find(1),
             'tipo_relatorios' => Tipo_relatorios::all(),
+            'tipo_r' => $tipo_r,
             'inc' => $inc
         ];
         $view = (isset($inc)) ? 'analise.relatorio.inc' : 'analise.relatorio.create';
@@ -275,6 +280,9 @@ class RelatoriosController extends Controller {
                 return $item;
             });
         }
+        $tipo_r = DB::table('tipo_relatorios')
+                ->where('id',$id)
+                ->first();
         //$relatorios = Relatorios::where('id','=',$id)->first();
         $relatorios = DB::table('tipo_relatorios')->where('id', $id)->first();
 
@@ -283,6 +291,7 @@ class RelatoriosController extends Controller {
             'shoppings' => DB::table('shoppings')->select('*')->get(),
             'relatorio' => $relatorios,
             'tipo_relatorios' => Tipo_relatorios::all(),
+            'tipo_r' => $tipo_r,
             'inc' => $inc
         ];
         $view = (isset($inc)) ? 'analise.relatorio.inc' : 'analise.relatorio.create';
@@ -309,7 +318,12 @@ class RelatoriosController extends Controller {
         $relatorio->tipo_relatorios_id = implode(',', $request->tipo_relatorios_id);
         $relatorio->projetos_id = $request->projetos_id;
         $relatorio->objetivo = $request->objetivo;
-        $relatorio->detalhamento = $request->detalhamento;
+//        $relatorio->detalhamento = $request->detalhamento;
+        $detalhamento = '';
+        foreach($request->detalhamento as $det){
+            $detalhamento .= '{BARRA}'.$det;
+        }
+        $relatorio->detalhamento = $detalhamento;
         $relatorio->consideracao = $request->consideracao;
 
         if ($request->obs != null) {
@@ -339,7 +353,7 @@ class RelatoriosController extends Controller {
                     //Set the position
                     $watermark->setPosition('topright');
                     //Specify the path to the existing pdf, the path to the new pdf file, and the watermark object
-                    $watermarker = new PDFWatermarker(storage_path('app/projetos/' . $arquivo->filepath), public_path('storage/arquivos/' . $arquivo->filepath), $watermark);
+                    $watermarker = new PDFWatermarker(storage_path('app/projetos/' . $arquivo->filepath), storage_path('app/public/arquivos/' . $arquivo->filepath), $watermark);
                 }else{
                     $watermark = new PDFWatermark(public_path('img/ftr-marca-1.png'), storage_path('app/projetos/' . $arquivo->filepath));
                     $watermarker = new PDFWatermarker(storage_path('app/projetos/' . $arquivo->filepath), public_path('storage/arquivos/' . $arquivo->filepath), $watermark);
@@ -467,10 +481,15 @@ class RelatoriosController extends Controller {
             }
             $i++;
         }
-        //SELECT * FROM users WHERE FIND_IN_SET(6,shoppings)
-        $cli = DB::table('users')
-                ->whereRaw('FIND_IN_SET(' . $request->shoppings_id . ',shoppings)')
-                ->pluck('email');
+//        SELECT u.email FROM users AS u
+//        INNER JOIN users_shoppings AS s
+//        ON s.users_id = u.id
+//        WHERE s.shoppings_id = 6
+        $cli = DB::table('users as u')
+                ->join('users_shoppings as s','s.users_id','=','u.id')
+                ->where('s.shoppings_id', $request->shoppings_id)
+                ->pluck('u.email');
+
         $clientes = $cli->toArray();
         $sistema = DB::table('tipo_relatorios')
                 ->whereIn('id', $request->tipo_relatorios_id)
@@ -478,8 +497,13 @@ class RelatoriosController extends Controller {
                 ->implode(' ');
         $shopping = DB::table('shoppings')->where('id', $request->shoppings_id)->value('shopping');
         $rev = '00';
-//        Mail::to($clientes)->send(new NewRelatorio($shopping,$request->loja,$sistema,$rev));
-        return redirect('analise/relatorios')->with('message', 'Novo relatório criado com sucesso');
+
+        try{
+            Mail::to($clientes)->send(new NewRelatorio($shopping,$request->loja,$sistema,$rev));
+        } catch (Exception $e) {
+            return redirect('analise/relatorios')->with('message', 'Novo relatório criado com sucesso. O e-mail de notificação não pode ser enviado');
+        }
+        return redirect('analise/relatorios')->with('message', 'Novo relatório criado com sucesso.');
     }
 
     /**
@@ -1001,6 +1025,20 @@ class RelatoriosController extends Controller {
             'adicional' => Ressalvas::find($id),
             'projeto_id' => $projeto_id
         ];
+        if(!is_null($projeto_id)){
+//            $p_arquivos = ProjetosArquivos::where([
+//                ['projetos_id', '=', $projeto_id],
+//                ['memorial', '<>', 1]
+//            ])->get();
+            $p_arquivos = DB::table('projetos_arquivos')
+                    ->select('*')
+                    ->where([
+                        ['projetos_id', '=', $projeto_id]
+                    ])->get();
+            $array['projeto_arquivos'] = $p_arquivos;
+            
+        }
+//        return var_dump($p_arquivos);
         return view('analise.relatorio.edit', $array);
     }
 
@@ -1024,7 +1062,11 @@ class RelatoriosController extends Controller {
         $relatorio->id_arquivo = $request->id_arquivo;
         $relatorio->tipo_relatorios_id = implode(',', $request->tipo_relatorios_id);
         $relatorio->objetivo = $request->objetivo;
-        $relatorio->detalhamento = $request->detalhamento;
+        $detalhamento = '';
+        foreach($request->detalhamento as $det){
+            $detalhamento .= '{BARRA}'.$det;
+        }
+        $relatorio->detalhamento = $detalhamento;
         $relatorio->consideracao = $request->consideracao;
 
         if ($request->obs != null) {
@@ -1298,7 +1340,11 @@ class RelatoriosController extends Controller {
         $relatorio->id_arquivo = $request->id_arquivo;
         $relatorio->tipo_relatorios_id = implode(',', $request->tipo_relatorios_id);
         $relatorio->objetivo = $request->objetivo;
-        $relatorio->detalhamento = $request->detalhamento;
+        $detalhamento = '';
+        foreach($request->detalhamento as $det){
+            $detalhamento .= '{BARRA}'.$det;
+        }
+        $relatorio->detalhamento = $detalhamento;
         $relatorio->consideracao = $request->consideracao;
         $relatorio->projetos_id = $request->projetos_id;
 
@@ -1313,6 +1359,41 @@ class RelatoriosController extends Controller {
         $relatorio->save();
 
         $relatorio_id = $relatorio->id;
+        
+        if(($request->obs == null) || ($request->ressalva != null)){
+            $arquivos = ProjetosArquivos::where([
+                                                    ['projetos_id', '=', $request->projetos_id],
+                                                    ['filepath', 'like', '%.pdf']
+                                                ]
+                                                )->get();
+            foreach($arquivos as $arquivo){
+                
+                if($arquivo->memorial == 1){
+                    $watermark = new PDFWatermark(public_path('img/ftr-marca-2.png'));
+                    //Set the position
+                    $watermark->setPosition('topright');
+                    //Specify the path to the existing pdf, the path to the new pdf file, and the watermark object
+                    $watermarker = new PDFWatermarker(storage_path('app/projetos/' . $arquivo->filepath), storage_path('app/public/arquivos/' . $arquivo->filepath), $watermark);
+                }else{
+                    $watermark = new PDFWatermark(public_path('img/ftr-marca-1.png'), storage_path('app/projetos/' . $arquivo->filepath));
+                    $watermarker = new PDFWatermarker(storage_path('app/projetos/' . $arquivo->filepath), public_path('storage/arquivos/' . $arquivo->filepath), $watermark);
+                }
+                $arq = new Arquivos;
+                $arq->shoppings_id = $request->shoppings_id;
+                $arq->loja = strtoupper($request->loja);
+                $arq->arquivo = $arquivo->filename;
+                $arq->hash = $arquivo->filepath;
+                $arq->dtRecebimento = $arquivo->created_at;
+                $arq->save();
+                
+                //Set page range. Use 1-based index.
+                $watermarker->setPageRange(1);
+
+                //Save the new PDF to its specified location
+                $watermarker->savePdf();
+                
+            }
+        }
         
         $detalhamentos_old = DB::table('detalhamentos')
                 ->where('relatorios_id', $id)
@@ -1511,19 +1592,31 @@ class RelatoriosController extends Controller {
                 }
             }
         }
-        $cli = DB::table('users')
-                ->whereRaw('FIND_IN_SET(' . $request->shoppings_id . ',shoppings)')
-                ->pluck('email');
+//        SELECT u.email FROM users AS u
+//        INNER JOIN users_shoppings AS s
+//        ON s.users_id = u.id
+//        WHERE s.shoppings_id = 6
+        $cli = DB::table('users as u')
+                ->join('users_shoppings as s','s.users_id','=','u.id')
+                ->where('s.shoppings_id', $request->shoppings_id)
+                ->pluck('u.email');
+
         $clientes = $cli->toArray();
-        $shopping = DB::table('shoppings')->where('id', $request->shoppings_id)->value('shopping');
         $sistema = DB::table('tipo_relatorios')
                 ->whereIn('id', $request->tipo_relatorios_id)
                 ->pluck('ref')
                 ->implode(' ');
+        $shopping = DB::table('shoppings')->where('id', $request->shoppings_id)->value('shopping');
+
         $rev = sprintf('%1$02d', $relatorio->revisao);
+        try{
+            Mail::to($clientes)->send(new NewRelatorio($shopping,$request->loja,$sistema,$rev));
+        } catch (Exception $e) {
+            return redirect('analise/relatorios')->with('message', 'Nova revisão criada com sucesso. O e-mail de notificação não pode ser enviado');
+        }
 //        Mail::to($clientes)->send(new NewRelatorio($shopping,$request->loja,$sistema,$rev));
 
-        return redirect('analise/relatorios')->with('message', 'Nova revisão criada com sucesso');
+        return redirect('analise/relatorios')->with('message', 'Nova revisão criada com sucesso.');
     }
 
     /**
