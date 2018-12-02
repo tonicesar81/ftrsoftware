@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
 ?>
 <!DOCTYPE html>
@@ -76,6 +76,7 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                                     <a class="dropdown-item" href="{{ url('/analise/projetos')}}">Projetos</a>
                                     <a class="dropdown-item" href="{{ url('/analise/relatorios')}}">Relatórios</a>
                                     <a class="dropdown-item" href="{{ url('arquivos')}}">Arquivos</a>
+                                    <a class="dropdown-item" href="{{ url('manuais/ftr_software_guia_analise.pdf')}}" target="_blank">Guia de uso</a>
                                     @if(!is_null($nivel))
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ url('/analise/sistema')}}">Disciplinas</a>
@@ -87,6 +88,18 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                                     @endif
                                 </div>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Datasheets</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{{ url('/datasheets')}}">Datasheets</a>
+                                    @if(!is_null($nivel))
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url('/datasheets/nomes')}}">Equipamentos</a>
+                                    <a class="dropdown-item" href="{{ url('/datasheets/tipos')}}">Tipos de equipamentos</a>
+                                    <a class="dropdown-item" href="{{ url('/datasheets/localidades')}}">Localidades</a>
+                                    @endif
+                                </div>
+                            </li>
                             @if(!is_null($nivel))
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Configurações</a>
@@ -95,8 +108,7 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                                     <a class="dropdown-item" href="{{ url('/shoppings')}}">Shoppings</a>
                                     <a class="dropdown-item" href="{{ url('/users')}}">Usuários</a>
                                     <a class="dropdown-item" href="{{ url('/funcionarios')}}">Funcionários</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Separated link</a>
+                                    
                                 </div>
                             </li>
                             @endif

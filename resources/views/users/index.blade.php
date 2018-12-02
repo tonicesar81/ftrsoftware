@@ -2,9 +2,10 @@
 $current = url()->current();
 $arr_route = explode('/', $current);
 $action = 'UsersController@pesquisa';
+$url = '/users/create';
 if(in_array('funcionarios',$arr_route)){
     $action = 'UsersController@pesquisaFuncionario';
-   
+    $url = '/funcionarios/create';
 }
 ?>
 @extends('layouts.app')
@@ -26,7 +27,7 @@ if(in_array('funcionarios',$arr_route)){
         <div class="card-body">
             <div class="row justify-content-between">
                 <div class="col-md-4">
-                    <a class="btn btn-primary" href="{{url('/users/create')}}" role="button">+ Novo usuário</a>
+                    <a class="btn btn-primary" href="{{url($url)}}" role="button">+ Novo usuário</a>
                 </div>
                 <div class="col-md-4">
                     {!! Form::open(['action' => $action]) !!}

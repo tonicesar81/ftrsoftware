@@ -21,6 +21,17 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('/welcome', function(){
+    return view('welcome');
+})->middleware('auth');
+
+Route::get('manuais/{filename}', function ($filename)
+{
+//    $file = storage_path('app') . '/' . $filename; // or wherever you have stored your PDF files
+    $file = asset('manuais/'.$filename);
+    return response()->file($file);
+});
+
 Route::resource('empresas', 'EmpresasController');
 Route::get('empresas/edit/{id}', 'EmpresasController@edit');
 
@@ -77,5 +88,17 @@ Route::get('arquivos/download/{id}', 'ArquivosController@download');
 Route::get('arquivos/{id}/{loja}', 'ArquivosController@lista');
 
 Route::resource('textos', 'ObjetivosController');
+
+Route::resource('datasheets/nomes', 'DsnomesController');
+Route::get('datasheets/nomes/edit/{id}', 'DsnomesController@edit');
+
+Route::resource('datasheets/tipos', 'DstiposController');
+Route::get('datasheets/tipos/edit/{id}', 'DstiposController@edit');
+
+Route::resource('datasheets/localidades', 'DslocaisController');
+Route::get('datasheets/localidades/edit/{id}', 'DslocaisController@edit');
+
+Route::resource('datasheets', 'DatasheetsController');
+Route::get('datasheets/edit/{id}', 'DatasheetsController@edit');
 
 //Route::get('projetos/addFile/{id}', 'ProjetosController@addFile');

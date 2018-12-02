@@ -68,6 +68,11 @@ and open the template in the editor.
                 vertical-align: middle;
                 padding: 5px;
             }
+            .img-bottom{
+                text-align: center;
+                vertical-align: bottom;
+                padding: 5px;
+            }
             .table-title{
                 background-color: #1f497d;
                 text-align: center;
@@ -404,10 +409,10 @@ and open the template in the editor.
             <p>{!! $dtExtensa !!}</p>
             <table width="100%" style="page-break-inside:avoid !important;">
                 <tr>
-                    <td class="img-middle tb_borderless" width="200px"><img src="{{public_path('img/assinatura.png')}}" style="max-height:100px;max-width:200px;" /></td>
-                    <td class="img-middle tb_borderless" width="200px"><img src="{{public_path('storage/'.$diretor->assinatura)}}"  style="max-height:100px;max-width:200px;" /></td>
+                    <td class="img-bottom tb_borderless" width="200px"><img src="{{public_path('img/assinatura.png')}}" style="max-height:100px;max-width:200px;" /></td>
+                    <td class="img-bottom tb_borderless" width="200px"><img src="{{public_path('storage/'.$diretor->assinatura)}}"  style="max-height:100px;max-width:200px;" /></td>
                     @if($relatorio->users_id != $diretor->id)
-                    <td class="img-middle tb_borderless" width="200px"><img src="{{public_path('storage/'.$relatorio->assinatura)}}" style="max-height:100px;max-width:200px;" /></td>
+                    <td class="img-bottom tb_borderless" width="200px"><img src="{{public_path('storage/'.$relatorio->assinatura)}}" style="max-height:100px;max-width:200px;" /></td>
                     @endif
                 </tr>
         

@@ -198,7 +198,9 @@ class UsersController extends Controller {
 //        }
         $dados = array('name' => $request->name, 'username' => $request->username, 'password' => $pw);
         $user->save();
+        $redir = 'users';
         if($request->has('funcionario')){
+            $redir = 'funcionarios';
             $dados = new User_dados;
             $dados->users_id = $user->id;
             if($request->has('titulo')){
@@ -229,13 +231,13 @@ class UsersController extends Controller {
             try {
                 Mail::to($request->email)->send(new NewUser());
             } catch (\Exception $e) {
-                return redirect('users')->with('message', 'Usuário cadastrado com sucesso, mas o E-mail não pôde ser enviado');
+                return redirect($redir)->with('message', 'Usuário cadastrado com sucesso, mas o E-mail não pôde ser enviado');
             }
         }
         //$user->notify(new CadastroMessage($user->id, $dados));
 
 
-        return redirect('users')->with('message', 'Usuário cadastrado com sucesso');
+        return redirect($redir)->with('message', 'Usuário cadastrado com sucesso');
     }
 
     /**
@@ -337,9 +339,10 @@ class UsersController extends Controller {
         }
 
         $user->save();
-        
+        $redir = 'users';
         $dados = User_dados::where('users_id', $id)->first();
         if(!is_null($dados)){
+            $redir = 'funcionarios';
             if($request->has('titulo')){
                 $dados->titulo = $request->titulo;
             }
@@ -367,7 +370,13 @@ class UsersController extends Controller {
             }
         }
         
-        return redirect('users')->with('message', 'Usuário alterado com sucesso');
+        if(Auth::id() == $id){
+            return redirect()->back()->with('message', 'Dados cadastrais alterados com sucesso.'); 
+        }else{
+            return redirect($redir)->with('message', 'Usuário alterado com sucesso');            
+        }
+        
+        
 
 //        if (in_array(Auth::user()->user_levels_id, [1, 2])) {
 //            return redirect('users')->with('message', 'Usuário alterado com sucesso');
@@ -389,7 +398,7 @@ class UsersController extends Controller {
 
         $user->delete();
 
-        return redirect('users')->with('message', 'Usuário removido com sucesso');
+        return rredirect()->back()->with('message', 'Usuário removido com sucesso');
     }
 
 }
