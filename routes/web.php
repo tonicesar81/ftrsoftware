@@ -99,6 +99,7 @@ Route::resource('datasheets/localidades', 'DslocaisController');
 Route::get('datasheets/localidades/edit/{id}', 'DslocaisController@edit');
 
 Route::resource('datasheets', 'DatasheetsController');
+Route::get('datasheets/create/{id?}', 'DatasheetsController@create');
 Route::get('datasheets/edit/{id}', 'DatasheetsController@edit');
 
 //Route::get('projetos/addFile/{id}', 'ProjetosController@addFile');

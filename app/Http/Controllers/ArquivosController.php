@@ -253,12 +253,20 @@ class ArquivosController extends Controller {
                     ['shoppings_id', '=', $id]
                 ])->orderBy('dtRecebimento', 'DESC')
                 ->get();
+        $lojaArray = explode(' - ', $loja);
+        $datasheet = DB::table('datasheets')
+                ->where([
+                    ['shoppings_id', $id],
+                    ['loja', $lojaArray[0]],
+                    ['numero', $lojaArray[1]]
+                ])->first();
         $array = array(
             'arquivos' => $arquivos,
             'shoppings' => $this->getShoppings(),
             'shopping_select' => $shopping_select,
             'loja' => $loja,
-            'nivel' => $this->nivel()
+            'nivel' => $this->nivel(),
+            'datasheet' => $datasheet
         );
 
         return view('arquivos.index', $array);

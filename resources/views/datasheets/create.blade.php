@@ -36,15 +36,15 @@ foreach ($locais as $l) {
             <div class="form-row">
                 <div class="form-group col-md-4">
                     {!! Form::label('shoppings_id', 'Shopping') !!}
-                    {!! Form::select("shoppings_id",$shopping ,null, ["class" => "form-control mb-2 selectable"]) !!}
+                    {!! Form::select("shoppings_id",$shopping ,(isset($relatorio->shoppings_id)) ? $relatorio->shoppings_id : null, ["class" => "form-control mb-2 selectable"]) !!}
                 </div>
                 <div class="form-group col-md-4">
                     {!! Form::label('loja', 'Nome da loja') !!}
-                    {!! Form::text('loja', null, ['class' => 'form-control']); !!}
+                    {!! Form::text('loja', (isset($relatorio->loja)) ? explode(' - ', $relatorio->loja)[0] : null, ['class' => 'form-control']); !!}
                 </div>
                 <div class="form-group col-md-4">
                     {!! Form::label('numero', 'Número de identificação') !!}
-                    {!! Form::text('numero', null, ['class' => 'form-control']); !!}
+                    {!! Form::text('numero', (isset($relatorio->loja)) ? explode(' - ', $relatorio->loja)[1] : null, ['class' => 'form-control']); !!}
                 </div>
                 
                 <div id="equips" class="form-group col-12 row">

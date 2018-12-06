@@ -535,12 +535,12 @@ class RelatoriosController extends Controller {
 //        SELECT *,(SELECT COUNT(*) FROM relatorios WHERE loja = r1.loja) AS rels 
 //        FROM `relatorios` r1 WHERE r1.shoppings_id = 6 GROUP BY r1.loja ORDER BY r1.updated_at DESC
         $subpastas = DB::table('relatorios as r1')
-                ->select(DB::raw('r1.id,r1.shoppings_id,r1.loja,(SELECT COUNT(*) FROM relatorios WHERE loja = r1.loja AND shoppings_id = ' . $id . ') AS rels, (SELECT updated_at FROM relatorios WHERE shoppings_id = r1.shoppings_id AND loja = r1.loja ORDER BY updated_at DESC LIMIT 0,1) AS updated_at'))
+                ->select(DB::raw('r1.id,r1.shoppings_id,r1.loja,(SELECT COUNT(*) FROM relatorios WHERE loja = r1.loja AND shoppings_id = ' . $id . ') AS rels, (SELECT COUNT(*) FROM relatorios	WHERE loja = r1.loja AND shoppings_id = ' . $id . ' AND analise IS NULL) AS aprovados, (SELECT updated_at FROM relatorios WHERE shoppings_id = r1.shoppings_id AND loja = r1.loja ORDER BY updated_at DESC LIMIT 0,1) AS updated_at'))
                 ->where('r1.shoppings_id', $id)
                 ->groupby('r1.loja')
                 ->orderby('updated_at', 'desc')
                 ->get();
-        return view('analise.relatorio.subpastas', ['subpastas' => $subpastas, 'shoppings' => $shoppings, 'shopping_select' => $shopping_select]);
+        return view('analise.relatorio.subpastas', ['nivel' => $this->nivel(), 'subpastas' => $subpastas, 'shoppings' => $shoppings, 'shopping_select' => $shopping_select]);
 //        return $subpastas;
     }
 

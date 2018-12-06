@@ -12,6 +12,7 @@ use App\Dslocais;
 use App\Datasheets;
 use App\Dsdetalhes;
 use App\User_dados;
+use App\Relatorios;
 
 class DatasheetsController extends Controller
 {
@@ -117,16 +118,20 @@ class DatasheetsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id = null)
     {
         //
         $this->permission();
+        $relatorio = Relatorios::where('id', $id)->first();
         $array = [
             'nomes' => Dsnomes::all(),
             'tipos' => Dstipo::all(),
             'locais' => Dslocais::all(),
             'shoppings' => Shopping::all()
         ];
+        if(!is_null($relatorio)){
+            $array['relatorio'] = $relatorio;
+        }
         
         return view('datasheets.create', $array);
     }
@@ -152,7 +157,7 @@ class DatasheetsController extends Controller
                     ['loja', '=', $request->loja],
                     ['numero', '=', $request->numero]
                 ])->first();
-        if(!$check->isEmpty()){
+        if(!is_null($check)){
             return redirect('datasheets/create')->with('message','Datasheet já existe.');
         }
         $datasheet = new Datasheets;

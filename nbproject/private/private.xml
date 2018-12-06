@@ -19,21 +19,26 @@
             <file>file:/C:/xampp/htdocs/ftrsoftware/database/migrations/2018_11_27_162419_create_dsnomes_table.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/database/migrations/2018_11_27_183537_create_dstipos_table.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/datasheets/tipos/create.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/datasheets/index.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/database/migrations/2018_11_27_194154_create_dslocais_table.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/DatasheetsController.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/home.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/datasheets/localidades/edit.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/analise/relatorio/edit.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RedirectsUsers.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/DsnomesController.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/DstiposController.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/ArquivosController.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/datasheets/localidades/create.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/routes/web.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/users/create.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/HomeController.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/layouts/app.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/datasheets/nomes/index.blade.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/app/Http/Controllers/Auth/LoginController.php</file>
             <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/datasheets/tipos/index.blade.php</file>
+            <file>file:/C:/xampp/htdocs/ftrsoftware/resources/views/arquivos/index.blade.php</file>
         </group>
     </open-files>
 </project-private>

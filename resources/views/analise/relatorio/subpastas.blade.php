@@ -36,6 +36,7 @@
             @else
             <table class="table table-bordered table-hover table-sm">
                 <thead>
+                <th></th>    
                 <th>Loja</th>
                 <th>Nº Relatórios</th>
                 <th>ùltima modificação</th>
@@ -43,6 +44,11 @@
                 <tbody>
                     @foreach($subpastas as $subpasta)
                     <tr>
+                        <td>
+                            @if(($subpasta->aprovados > 0) && (!is_null($nivel)))
+                            <a href="{{url('/datasheets/create/'.$subpasta->id)}}" role="button" class="btn btn-sm btn-outline-secondary" title="Criar datasheet"><i class="fas fa-clipboard-list"></i></a>
+                            @endif
+                        </td>
                         <td><a href="{{ url('/analise/relatorios/'.$subpasta->shoppings_id.'/'.$subpasta->id) }}"><i class="fas fa-folder"></i> {{ $subpasta->loja }}</a></td>
                         <td>{{ $subpasta->rels }}</td>
                         <td>{{ date('d/m/Y - H:i:s', strtotime($subpasta->updated_at.' -3 hours')) }}</td>

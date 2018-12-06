@@ -88,19 +88,20 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                                     @endif
                                 </div>
                             </li>
+                            @if(!is_null($nivel))
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Datasheets</a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="{{ url('/datasheets')}}">Datasheets</a>
-                                    @if(!is_null($nivel))
+                                    
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ url('/datasheets/nomes')}}">Equipamentos</a>
                                     <a class="dropdown-item" href="{{ url('/datasheets/tipos')}}">Tipos de equipamentos</a>
                                     <a class="dropdown-item" href="{{ url('/datasheets/localidades')}}">Localidades</a>
-                                    @endif
+                                    
                                 </div>
                             </li>
-                            @if(!is_null($nivel))
+                            
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Configurações</a>
                                 <div class="dropdown-menu">

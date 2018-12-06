@@ -42,7 +42,7 @@
             @else
             <table class="table table-bordered table-hover table-sm">
                 <thead>
-                @if(Auth::user()->user_levels_id <= 3)
+                @if(!is_null($nivel))
                 <th>Ações</th>
                 @endif
                 <th>Arquivo</th>
@@ -50,9 +50,27 @@
                 <th>Data de Aprovação</th>
                 </thead>
                 <tbody>
+                    @if(!is_null($datasheet))
+                        @if(!is_null($nivel))
+                    <tr>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a class="btn btn-outline-primary btn-sm" href="{{url('/datasheets/edit/'.$datasheet->id)}}" role="button" data-toggle="tooltip" data-placement="left" title="Modificar"><i class="fas fa-edit"></i></a>
+                                {!! Form::open(['url' => 'datasheets/'.$datasheet->id, 'method' => 'delete']) !!}
+                                {!! Form::button('<i class="fas fa-trash-alt"></i>', ['class' => 'btn btn-outline-danger btn-sm', 'onclick' => 'return confirm(\'Você tem certeza?\')', 'type' => 'submit', 'data-toggle' => 'tooltip', 'data-placement' => 'right', 'title' => 'Apagar']) !!}
+                                <!--<button class="btn btn-outline-danger btn-sm" type="submit" onClick="return confirm('Você tem certeza?')" name="name"></button>-->
+                                {!! Form::close() !!}
+                            </div>
+                        </td>
+                        @endif
+                        <td><a href="{{ url('/datasheets/'.$datasheet->id) }}" target='_blank'>Datasheet.pdf</a></td>
+                        <td></td>
+                        <td>{!! date('d/m/Y', strtotime($datasheet->created_at)) !!}</td>
+                    </tr>
+                    @endif
                     @foreach($arquivos as $arquivo)
                     <tr>
-                        @if(Auth::user()->user_levels_id <= 3)
+                        @if(!is_null($nivel))
                         <td>
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 {!! Form::open(['action' => ['ArquivosController@destroy', $arquivo->id], 'method' => 'delete']) !!}
