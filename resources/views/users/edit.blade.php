@@ -47,14 +47,7 @@ if(isset($tipo_relatorios)){
                 <div class="col-md-6 offset-md-3">
                     {!! Form::label('titulo', 'Título/cargo do usuário (O que será exibido abaixo da assinatura)') !!}
                     {!! Form::text('titulo', $funcionario->titulo, ['class' => 'form-control']); !!}
-                </div>
-                <div class="col-md-6 offset-md-3 form-group">
-                    <br>
-                    {!! Form::label('assinatura', 'Assinatura'); !!}
-                    <br>
-                    {!! Form::file('assinatura', null, ['class' => 'form-control-file']); !!}
-                </div>
-                
+                </div>                                
                 @if($dados->user_levels_id == 1)
                 <div class="col-md-6 offset-md-3">
                     {!! Form::label('username', 'Login') !!}
@@ -63,25 +56,30 @@ if(isset($tipo_relatorios)){
                 @endif
                 @endif
                 <div class="col-md-6 offset-md-3">
-                    {!! Form::label('email', 'E-mail') !!}
-                    {!! Form::email('email', $user->email, ['class' => 'form-control']); !!}
-                </div>
-                <div class="col-md-6 offset-md-3">
                     {!! Form::label('password', 'Senha') !!}
                     {!! Form::text('password', null, ['class' => 'form-control']); !!}
                 </div>
-                
+                <div class="col-md-6 offset-md-3">
+                    {!! Form::label('email', 'E-mail') !!}
+                    {!! Form::email('email', $user->email, ['class' => 'form-control']); !!}
+                </div>
                 @if(!isset($funcionario))
+                <div class="form-group col-md-6 offset-md-3">
+                    {!! Form::label('telefone', 'Telefone') !!}
+                    {!! Form::text('telefone', (isset($responsavel)) ? $responsavel->telefone : null, ['class' => 'form-control tel']); !!}
+                </div>
+                <div class="form-group form-check col-md-6 offset-md-3">
+                    {!! Form::checkbox('responsavel', true, (isset($responsavel->assinatura)) ? true : false, [ 'class' => 'form-check-label']) !!}
+                    {!! Form::label('responsavel', 'Responsável por obras', ['class' => 'form-check-label']) !!}
+                </div>
                 @if(isset($shopping))
                 <div class="form-group col-md-6 offset-md-3">
                     <br>
                     Selecione um shopping no menu abaixo e clique em "Adicionar" para acrescentar a lista. Pode-se acrescentar 
                     quantos forem necessários
                 </div>
-                <div class="form-group col-md-4 offset-md-3">
-                    
-                    {!! Form::select("sel_shopping",$shopping ,null, ["class" => "form-control mb-2 selectable"]) !!}
-                    
+                <div class="form-group col-md-4 offset-md-3">                    
+                    {!! Form::select("sel_shopping",$shopping ,null, ["class" => "form-control mb-2 selectable"]) !!}                    
                 </div>
                 <div class="form-group col-md-2">
                     {!! Form::button('Adicionar shopping', ['class' => 'btn btn-primary', 'id' => 'shop_btn']); !!}
@@ -113,6 +111,12 @@ if(isset($tipo_relatorios)){
                     @endforeach
                 </div>
                 @endif
+                <div class="col-md-6 offset-md-3 form-group">
+                    <br>
+                    {!! Form::label('assinatura', (!isset($funcionario)) ? 'Assinatura (Obrigatório caso o cliente seja o responsável por obras)' : 'Assinatura'); !!}
+                    <br>
+                    {!! Form::file('assinatura', null, ['class' => 'form-control-file']); !!}
+                </div>
                 <div class="form-group col-12">
                     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']); !!}
                     <!--<a class="btn btn-secondary" href="{{url('/users')}}" role="button">Voltar</a>-->

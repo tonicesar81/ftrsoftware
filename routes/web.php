@@ -103,3 +103,61 @@ Route::get('datasheets/create/{id?}', 'DatasheetsController@create');
 Route::get('datasheets/edit/{id}', 'DatasheetsController@edit');
 
 //Route::get('projetos/addFile/{id}', 'ProjetosController@addFile');
+
+//-----MANUTENÇÃO--------
+Route::resource('manutencao/itens', 'Man_itensController');
+Route::get('manutencao/itens/edit/{id}', 'Man_itensController@edit');
+
+Route::resource('manutencao/desc', 'Man_descController');
+Route::get('manutencao/desc/edit/{id}', 'Man_descController@edit');
+
+Route::resource('manutencao/pavimentos', 'PavimentosController');
+Route::get('manutencao/pavimentos/edit/{id}', 'PavimentosController@edit');
+
+Route::resource('manutencao/setores', 'SetoresController');
+Route::get('manutencao/setores/create/{id}', 'SetoresController@create');
+Route::get('manutencao/setores/edit/{id}', 'SetoresController@edit');
+
+Route::resource('manutencao/instalacoes', 'InstalacoesController');
+Route::get('manutencao/instalacoes/edit/{id}', 'InstalacoesController@edit');
+Route::get('manutencao/instalacoes/includes/pavimento/{id}', 'InstalacoesController@pavimentos');
+Route::get('manutencao/instalacoes/includes/setor/{id}', 'InstalacoesController@setores');
+
+Route::resource('manutencao/estruturas', 'EstruturasController');
+Route::get('manutencao/estruturas/create/{id}', 'EstruturasController@create');
+
+Route::resource('manutencao/relatorios', 'Man_relatoriosController');
+Route::get('manutencao/relatorios/instalacao/{shopping}/{item}', 'Man_relatoriosController@instalacao');
+Route::get('manutencao/relatorios/lista/{id}', 'Man_relatoriosController@lista');
+Route::get('manutencao/relatorios/edit/{id}', 'Man_relatoriosController@edit');
+Route::get('manutencao/relatorios/duplicar/{id}', 'Man_relatoriosController@duplicar');
+Route::get('manutencao/relatorios/pdf/{id}', 'Man_relatoriosController@pdf');
+
+Route::resource('manutencao/entregas', 'EntregasController');
+Route::get('manutencao/entregas/pdf/{id}', 'EntregasController@pdf');
+Route::get('manutencao/entregas/servico/{id}', 'EntregasController@servico');
+Route::post('manutencao/entregas/servico', 'EntregasController@storeServ');
+
+Route::resource('manutencao/manuais', 'ManuaisController');
+
+Route::resource('manutencao/capitulos', 'ManualCapitulosController');
+Route::get('manutencao/capitulos/create/{id}', 'ManualCapitulosController@create');
+Route::get('manutencao/capitulos/edit/{id}', 'ManualCapitulosController@edit');
+
+Route::resource('manutencao/termos', 'TermosController');
+Route::get('manutencao/termos/edit/{id}', 'TermosController@edit');
+
+Route::resource('manutencao/obras', 'ObrasController');
+Route::get('manutencao/obras/create/{id}', 'ObrasController@create');
+Route::get('manutencao/obras/instalacao/{shopping}/{item}', 'ObrasController@instalacao');
+Route::get('manutencao/obras/disciplina/{id}/{qnt}', 'ObrasController@disciplina');
+Route::get('manutencao/obras/arquivos/{id}', 'ObrasController@arquivos');
+Route::get('manutencao/arquivos/download/{id}', 'ObrasController@download');
+Route::get('manutencao/obras/certificado/{id}', 'ObrasController@certificado');
+
+Route::resource('manutencao/certificados', 'Obras_certificados_padraoController');
+
+Route::resource('manutencao/arquivos', 'Obras_arquivosController');
+Route::get('manutencao/arquivos/create/{obras_id}', 'Obras_arquivosController@create');
+
+Route::resource('manutencao/padrao', 'ObrasTextosPadraoController');

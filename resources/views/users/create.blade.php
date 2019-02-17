@@ -50,6 +50,13 @@ if(!in_array('funcionarios',$arr_route)){
                     {!! Form::label('username', 'Login') !!}
                     {!! Form::text('username', null, ['class' => 'form-control']); !!}
                 </div>
+                <div class="form-group col-md-6 offset-md-3">
+                    {!! Form::label('password', 'Senha') !!}
+                    {!! Form::text('password', null, ['class' => 'form-control']); !!}
+                    <small id="inputHelpBlock" class="form-text text-muted">
+                        Se nenhum valor for informado, a senha padrão será "123456"
+                    </small>
+                </div>
                 @if(in_array('funcionarios',$arr_route))
                 {!! Form::hidden('funcionario', true); !!}
                 <div class="form-group col-md-6 offset-md-3">
@@ -60,24 +67,29 @@ if(!in_array('funcionarios',$arr_route)){
                     {!! Form::label('titulo', 'Título/cargo do usuário (O que será exibido abaixo da assinatura)') !!}
                     {!! Form::text('titulo', null, ['class' => 'form-control']); !!}
                 </div>
-                <div class="col-md-6 offset-md-3 form-group">
-                    <br>
-                    {!! Form::label('assinatura', 'Assinatura'); !!}
-                    <br>
-                    {!! Form::file('assinatura', null, ['class' => 'form-control-file']); !!}
-                </div>
                 @endif
                 <div class="form-group col-md-6 offset-md-3">
                     {!! Form::label('email', 'E-mail') !!}
                     {!! Form::email('email', null, ['class' => 'form-control']); !!}
                 </div>
+                
+                @if(!in_array('funcionarios',$arr_route))
                 <div class="form-group col-md-6 offset-md-3">
-                    {!! Form::label('password', 'Senha') !!}
-                    {!! Form::text('password', null, ['class' => 'form-control']); !!}
-                    <small id="inputHelpBlock" class="form-text text-muted">
-                        Se nenhum valor for informado, a senha padrão será "123456"
-                    </small>
+                    {!! Form::label('telefone', 'Telefone') !!}
+                    {!! Form::text('telefone', null, ['class' => 'form-control tel']); !!}
                 </div>
+                <div class="form-group form-check col-md-6 offset-md-3">
+                    {!! Form::checkbox('responsavel', true, false, [ 'class' => 'form-check-label']) !!}
+                    {!! Form::label('responsavel', 'Responsável por obras', ['class' => 'form-check-label']) !!}
+                </div>
+                @endif
+                <div class="col-md-6 offset-md-3 form-group">
+                    <br>
+                    {!! Form::label('assinatura', (!in_array('funcionarios',$arr_route)) ? 'Assinatura (Obrigatório caso o cliente seja o responsável por obras)' : 'Assinatura'); !!}
+                    <br>
+                    {!! Form::file('assinatura', null, ['class' => 'form-control-file']); !!}
+                </div>
+                                
                 @if(!in_array('funcionarios',$arr_route))
                 <div class="form-group col-md-6 offset-md-3">
                     Selecione um shopping no menu abaixo e clique em "Adicionar" para acrescentar a lista. Pode-se acrescentar 

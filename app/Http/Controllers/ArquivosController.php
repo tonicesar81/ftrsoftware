@@ -72,6 +72,7 @@ class ArquivosController extends Controller {
             $sh_array[] = $s->id;
         }
 //        return var_dump($sh_array);
+        
         $shops = implode(',', $sh_array);
         if (is_null($this->nivel())) {
             $pastas = DB::table('shoppings')

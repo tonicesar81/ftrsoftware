@@ -13,6 +13,7 @@ use App\User_dados;
 use App\Shopping;
 use Illuminate\Support\Facades\Storage;
 use App\tipo_relatorios;
+use App\Users_responsaveis;
 
 //use App\Mail\NewUser;
 
@@ -212,6 +213,18 @@ class UsersController extends Controller {
             }
             $dados->save();
         }
+        if($request->responsavel){
+            $telefone = $request->telefone;
+            $users_id = $user->id;
+            if($request->hasFile('assinatura')){
+                $assinatura = Storage::disk('public')->put('assinaturas', $request->file('assinatura'));
+            }else{
+                $assinatura = null;
+            }
+            DB::table('users_responsaveis')->insert(
+                    ['users_id' => $users_id, 'telefone' => $telefone, 'assinatura' => $assinatura]
+            );
+        }
         if( $request->has('shoppings')){
             foreach($request->shoppings as $shopping){
                 DB::table('users_shoppings')->insert(
@@ -312,7 +325,18 @@ class UsersController extends Controller {
 //        }
         $levels = User_level::where('id', '<>', 1)->get();
         $tipo_relatorios = tipo_relatorios::where('id', '<>', 4)->get();
-        return view('users.edit', ['user' => $user, 'shoppings' => $shoppings, 'tags' => $tags, 'dados' => $dados, 'funcionario' => $funcionario, 'levels' => $levels, 'tipo_relatorios' => $tipo_relatorios]);
+        $responsavel = DB::table('users_responsaveis')->where('users_id', $id)->first();
+        $array = [
+            'user' => $user, 
+            'shoppings' => $shoppings, 
+            'tags' => $tags, 
+            'dados' => $dados, 
+            'funcionario' => $funcionario, 
+            'levels' => $levels, 
+            'tipo_relatorios' => $tipo_relatorios,
+            'responsavel' => $responsavel
+                ];
+        return view('users.edit', $array);
     }
 
     /**
@@ -353,6 +377,23 @@ class UsersController extends Controller {
         }
         DB::table('users_shoppings')->where('users_id', '=', $user->id)->delete();
         
+        if($request->responsavel){
+//            DB::table('users_responsaveis')->where('users_id', '=', $user->id)->delete();
+            $telefone = $request->telefone;
+            $users_id = $user->id;
+            $array = ['users_id' => $users_id, 'telefone' => $telefone];
+            if($request->hasFile('assinatura')){
+                $assinatura = Storage::disk('public')->put('assinaturas', $request->file('assinatura'));
+                $array['assinatura'] = $assinatura;
+            }else{
+                $assinatura = null;
+            }
+            
+            Users_responsaveis::updateOrCreate(
+                    ['users_id' => $users_id],
+                    $array
+            );
+        }
         if( $request->has('shoppings')){
             foreach($request->shoppings as $shopping){
                 DB::table('users_shoppings')->insert(

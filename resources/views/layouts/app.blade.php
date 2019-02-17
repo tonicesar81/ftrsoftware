@@ -31,12 +31,27 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
         <script src="{{ asset('js/selectize.min.js') }}"></script>
         <script src="{{ asset('js/summernote-bs4.js') }}"></script>
         <script src="{{ asset('js/summernote-pt-BR.js') }}"></script>
+        <script src="{{ asset('js/jquery.mask.js') }}"></script>
     <script>
         $(document).ready(function ($) {
             $('.selectable').selectize();
+            $('.select-responsavel').selectize({
+                create: true,
+                sortField: 'text'
+            });
             $('.summernote').summernote({
                 lang: 'pt-BR' // default: 'en-US'
             });
+            var SPMaskBehavior = function (val) {
+                return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+            },
+            spOptions = {
+            onKeyPress: function(val, e, field, options) {
+                field.mask(SPMaskBehavior.apply({}, arguments), options);
+              }
+            };
+
+            $('.tel').mask(SPMaskBehavior, spOptions);
         });
         $(function () {
             $('[data-toggle="popover"]').popover({
@@ -85,6 +100,29 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                                     <a class="dropdown-item" href="{{ url('/analise/grupos')}}">Grupos de disciplinas</a>
                                     <a class="dropdown-item" href="{{ url('/analise/normas')}}">Normas</a>
                                     <a class="dropdown-item" href="{{ url('textos/create')}}">Textos padrão</a>
+                                    @endif
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Obras</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{{ url('/manutencao/obras')}}">Arquivos e relatórios</a>
+                                    @if(!is_null($nivel))
+                                    <a class="dropdown-item" href="{{ url('/manutencao/obras/create')}}">Novo relatorio</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/itens')}}">Disciplinas</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/itens/create')}}">Criar disciplina</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/desc')}}">Recomendações</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/desc/create')}}">Criar Recomendação</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/padrao/create')}}">Textos padrão para obras</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/certificados/create')}}">Textos padrão para certificados</a>
+<!--                                    <a class="dropdown-item" href="{{ url('/manutencao/pavimentos')}}">Pavimentos</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/pavimentos/create')}}">Criar Pavimento</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/instalacoes')}}">Instalações</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/instalacoes/create')}}">Criar Instalação</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/termos')}}">Termos</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/termos/create')}}">Criar termo</a>
+                                    <a class="dropdown-item" href="{{ url('/manutencao/capitulos')}}">Manuais de entrega</a>-->
                                     @endif
                                 </div>
                             </li>
