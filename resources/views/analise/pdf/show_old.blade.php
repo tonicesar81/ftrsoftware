@@ -68,11 +68,6 @@ and open the template in the editor.
                 vertical-align: middle;
                 padding: 5px;
             }
-            .img-bottom{
-                text-align: center;
-                vertical-align: bottom;
-                padding: 5px;
-            }
             .table-title{
                 background-color: #1f497d;
                 text-align: center;
@@ -169,16 +164,14 @@ and open the template in the editor.
                     
                 </tr>
                 <tr>
-                    <td class="tb_borderless" >
-                        <div style='width:92%;text-align:center;padding-top:30px;padding-bottom:30px;' class="px-2 bordered border-dark" >
+                    <td class="" style='text-align:center;padding-top:30px;padding-bottom:30px;' >
                         <h2>RELATÓRIO DE ANÁLISE DE PROJETO</h2>
                         <h2>{{ $disciplina }}</h2>
-                        </div>
                     </td>
                 </tr>
                 <tr>
                     <td style='/*padding-top:210px;padding-bottom:100px;*/' class="tb_borderless">
-                        <div style='width:85%;margin-top:50px;margin-bottom:50;padding:20px;background-color:#d9d9d9;' class="px-2 bordered border-dark bg-cliente">
+                        <div style='margin-top:50px;margin-bottom:50;padding:20px;background-color:#d9d9d9;' class="px-2 bordered border-dark bg-cliente">
                             <h4>CLIENTE: {{ strtoupper($relatorio->empresa) }}</h4>
                             <h4>SHOPPING: {{ $relatorio->shopping }}</h4>
                             <h4>LOJA: {{$relatorio->loja}}</h4>
@@ -210,8 +203,8 @@ and open the template in the editor.
                 </tr>
                 @foreach($normas as $norma)
                 <tr>
-                    <td class="bg-secondary" width="30%">{!! strtoupper($norma->norma) !!}</td>
-                    <td>{!! ucwords($norma->descricao) !!}</td>
+                    <td class="bg-secondary" width="30%">{{$norma->norma}}</td>
+                    <td>{{$norma->descricao}}</td>
                 </tr>
                 @endforeach
             </table>
@@ -228,17 +221,14 @@ and open the template in the editor.
             <h3>{{$c = $c + 1}}. Análise de projetos</h3>
             @php $n = 1; @endphp
             @foreach($sistemas as $s)
-            
             <div class="divisor"></div>
-            <table width="100%" style="page-break-inside: avoid;">
+            <table width="100%">
                 <tr>
-                    <td colspan="2" class="table-title">{{$c}}.{{ $n }}. Check list dos itens verificados</td>
-<!--                    <td colspan="2" class="table-title">{{$c}}.{{ $n }}.{{ $s['tipo_nome'] }}</td>-->
+                    <td colspan="2" class="table-title">{{$c}}.{{ $n }}.{{ $s['tipo_nome'] }}</td>
                 </tr>
                 @php 
                 $i =1;
-                $comm = array();
-                $ok = 0;
+                $observacoes = array();
                 @endphp
                 @foreach($s['itens'] as $item)
                 <tr>
@@ -246,34 +236,16 @@ and open the template in the editor.
                     <td class="text-center" width="10%"><img src="{{ $stat = ($item->sts > 0)? public_path('img/not-ok.png') : public_path('img/ok.png')}}" width="16px" style="margin:5px;" /></td>
                 </tr>
                 @php
-                    $x = 1;
-                    
-                    foreach($item->comentarios as $comentario){
-                        switch($comentario->st){
-                            case 1:
-                            $st = 'g';
-                            $ok = 1;
-                            break;
-                            case 2:
-                            $st = 'o';
-                            $ok = 1;
-                            break;
-                            case 3:
-                            $st = 'b';
-                            break;
-                        }
-                        $comm[] = [$c.'.'.$n.'.'.$i.'.'.$x.' - '.$comentario->texto, $st];
-                        $fd[$comentario->det_id] = $c.'.'.$n.'.'.$i.'.'.$x;
-                        $x++;
-                       
+                    foreach($item->obs as $obs){
+                        $observacoes[] = $c.'.'.$n.'.'.$i.' - '.$obs->lista_analise;
                     }
+                   
                 $i++ 
                 @endphp
                 @endforeach
-                
             </table>
             <div class="divisor"></div>
-            <table width="100%" style="page-break-inside: avoid; margin-bottom:30px;">
+            <table width="100%">
                 <tr>
                     <td class="table-title">
                        
@@ -281,26 +253,24 @@ and open the template in the editor.
                     </td>
                 </tr>
                 <tr>
-                    <td class="tb_borderless">
-                        <p>
-                            @php
-                            $variaveis = array('{DISCIPLINA}', '{LOJA}', '{SHOPPING}', '{EMPRESA}');
-                            $repor = array($refs[$n - 1], $relatorio->loja, $relatorio->shopping, $relatorio->empresa);
-                            $detarray = explode('{BARRA}',$detalhamento);
-                            $det = $detarray[$n];
-                            @endphp
-                            {!! str_replace($variaveis, $repor, $det) !!}
-                        </p>
+                    <td>
+                        Adotando-se como premissa inicial, a Viabilidade Técnico-Econômica (Custo x Benefício) do Empreendimento
+                        e tomando-se por base, as premissas básicas: operacional x racionalização de energia x qualidade interna do ar e sempre atendendo na plenitude
+                        as Normas Técnicas da ABNT-NBR 16401:1, 2 e 3 / 2008 / ASHRAE e ANVISA - Portaria Nº 3523, consideramos o Projeto Executivo
+                        de Pressurização de Escada: FTR Projetos e Instalações, segue status abaixo:
                     </td>
                 </tr>
+            </table>
+            <div class="divisor"></div>
+            <table width="100%">
                 <tr>
-                    @if($ok > 0)
+                    @if(!empty($observacoes))
                     $class = (!is_null($relatorio->ressalva)) ? 'bg-warning' : 'bg-danger' !!}
                     @else
                     $class = 'bg-success'
                     @endif
                     
-                        @if($ok > 0)
+                        @if(!empty($observacoes))
                         {!! (!is_null($relatorio->ressalva)) ? '<td class="bg-warning text-center"><h3>PROJETO APROVADO COM RESSALVA</h3></td>' : '<td class="bg-danger text-center"><h3>PROJETO NÃO APROVADO</h3></td>' !!}
                         @else
                         <td class="bg-success text-center"><h3>PROJETO APROVADO</h3></td>
@@ -308,90 +278,64 @@ and open the template in the editor.
                     </td>
                 </tr>
             </table>
-            
-            <div class="divisor"></div>
-            @if(!empty($comm))
             <table width="100%">
                 <tr>
                     <td class="table-title" colspan="2">
-                       Comentários técnicos complementares e ressalvas
+                       Observações
                     </td>
                     <td class="table-title" width="10%">
                         Status
                     </td>
                 </tr>
-                @foreach ($comm as $ana)
-                
+                @foreach ($observacoes as $analise)
                 <tr>
-                    <td class="bg-primary tb_borderless" width="10%">
+                    <td class="bg-primary" width="10%">
                         
                     </td>
                     <td>
-                        {{ $ana[0] }}
+                        {{ $analise }}
                     </td>
                     <td align="center">
-                        <img src="{{public_path('img/'.$ana[1].'-dot.png')}}" width="10px" />
+                        <img src="{{public_path('img/g-dot.png')}}" width="10px" />
                     </td>
                 </tr>
                     @endforeach
-                    
             </table>
             <table width="100%">
                 <tr>
                     <td class="tb_borderless" width="25%">ST (STATUS)</td>
                     <td class="tb_borderless" width="25%"><img src="{{public_path('img/g-dot.png')}}" width="10px" /> ITEM NOVO</td>
                     <td class="tb_borderless" width="25%"><img src="{{public_path('img/o-dot.png')}}" width="10px" /> ITEM PENDENTE</td>
-                    <td class="tb_borderless" width="25%"><img src="{{public_path('img/b-dot.png')}}" width="10px" /> ITEM RESOLVIDO</td>                    
+                    <td class="tb_borderless" width="25%"><img src="{{public_path('img/b-dot.png')}}" width="10px" /> ITEM CONCLUÍDO</td>
+                    <td class="tb_borderless" width="25%"><img src="{{public_path('img/k-dot.png')}}" width="10px" /> CANCELADO</td>
                 </tr>
             </table>
-            @endif
-            
             @php $n++ @endphp
             @endforeach
-            
             @if(!$figuras->isEmpty())
-            
-            <h3>{{$c = $c + 1}}. Anexos</h3> 
-            
-                @php 
-                $fn = 1;
-                $dt_id = 0;
-                @endphp
-                @foreach($figuras as $figura)
-                @php
-                    if($figura->detalhamentos_id == $dt_id){
-                        $fn = $fn + 1;
-                        $dt_id = $figura->detalhamentos_id;
-                    }else{
-                        $fn = 1;
-                        $dt_id = $figura->detalhamentos_id;
-                    }
-                @endphp
-            <table width="100%"  >
-                <tr class="tb_borderless">
-                    <td class="tb_borderless" style="page-break-after: avoid;">
+            <table width="100%" >
+                <tr>
+                    <td class="table-gray">{{$c = $c + 1}}. Figura/Exemplo demonstrativo
                     </td>
                 </tr>
-                <tr style="page-break-after: avoid;">            
+                <!--                width="690" height="368"-->
+                
+                @foreach($figuras as $figura)
+                <tr>            
                     <td class="text-center">
                         
-                        <img style="max-width:690px;max-height:368px" src="{{ public_path('storage/'.$figura->figura) }}"/>
-                        <br>
-                        <i>{!! $fd[$figura->detalhamentos_id] !!}. Figura {!! $fn !!}</i>
+                        <img width="690" height="368" src="{{ public_path('storage/'.$figura->figura) }}"/>
                     </td>
                 </tr>
-            </table>    
                 @endforeach
-                       
+            </table>           
             @endif
             
             @if(!is_null($adicional))
-            
-            <table width="100%" style="page-break-inside: avoid; margin-bottom:30px;margin-top:30px;">
+            <div class="divisor"></div>
+            <table width="100%">
                 <tr>
-                    <td class="table-title">
-                        Informações adicionais
-                    </td>
+                    <td class="table-gray">Informações adicionais</td>
                 </tr>
                 <tr>
                     <td>
@@ -400,55 +344,8 @@ and open the template in the editor.
                 </tr>
             </table>
             @endif
-            
-            <h3>{{$c = $c + 1}}. Considerações Finais</h3>
-            <p>
-                {!! $consideracao !!}
-            </p>
             <div class="divisor"></div>
-            <p>{!! $dtExtensa !!}</p>
             <table width="100%" style="page-break-inside:avoid !important;">
-                <tr>
-                    <td class="img-bottom tb_borderless" width="200px"><img src="{{public_path('img/assinatura.png')}}" style="max-height:100px;max-width:200px;" /></td>
-                    <td class="img-bottom tb_borderless" width="200px"><img src="{{public_path('storage/'.$diretor->assinatura)}}"  style="max-height:100px;max-width:200px;" /></td>
-                    @if($relatorio->users_id != $diretor->id)
-                        @if(!is_null($relatorio->assinatura))
-                        <td class="img-bottom tb_borderless" width="200px"><img src="{{public_path('storage/'.$relatorio->assinatura)}}" style="max-height:100px;max-width:200px;" /></td>
-                        @endif
-                    @endif
-                </tr>
-        
-                <tr>
-                    <td class="table-gray">
-                        ANTONIO LOUREIRO FEIJÓO
-                        <br>
-                        Eng. Mecânico / Segurança do Trabalho
-                    </td>
-                    <td class="table-gray">
-                        <span style="text-transform: uppercase">{{ strtoupper($diretor->name) }}</span>
-                        <br>
-                        @if(!is_null($diretor->titulo))
-                        {{ $diretor->titulo }}
-                        @else
-                        {{ $diretor->nivel }}
-                        @endif
-                    </td>
-                    @if($relatorio->users_id != $diretor->id)
-                        @if(!is_null($relatorio->assinatura))
-                        <td class="table-gray">
-                            <span style="text-transform: uppercase">{{ strtoupper($relatorio->name) }}</span>
-                            <br>
-                            @if(!is_null($relatorio->titulo))
-                            {{ $relatorio->titulo }}
-                            @else
-                            {{ $nivel }}
-                            @endif
-                        </td>
-                        @endif
-                    @endif
-                </tr>
-            </table>
-<!--            <table width="100%" style="page-break-inside:avoid !important;">
                 <tr>
                     <td class="img-middle"><img src="{{public_path('img/assinatura.png')}}" width="200px" /></td>
                 </tr>
@@ -456,7 +353,7 @@ and open the template in the editor.
                     <td class="table-gray">DIRETOR TÉCNICO:  ANTONIO LOUREIRO FEIJÓO - ENG. MECÂNICO / SEGURANÇA DO TRABALHO 
                     </td>
                 </tr>
-            </table>-->
+            </table>
         </div>
     </body>
 </html>

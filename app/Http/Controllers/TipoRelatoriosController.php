@@ -119,6 +119,7 @@ class TipoRelatoriosController extends Controller {
         ]);
 
         $tipo_relatorios->tipo_relatorio = $request->tipo_relatorio;
+        $tipo_relatorios->grupos_id = $request->grupos_id;
         if(!$request->filled('ref')){
             $tipo_relatorios->ref = strtoupper(substr($request->tipo_relatorio, 0, 3));
         }else{

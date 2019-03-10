@@ -41,8 +41,11 @@ Route::post('shoppings/pesquisa', 'ShoppingsController@pesquisa');
 
 Route::resource('users', 'UsersController');
 
+Route::get('exportar', 'UsersController@exportar');
+
 Route::get('users/edit/{id}', 'UsersController@edit');
 Route::post('users/pesquisa', 'UsersController@pesquisa');
+
 
 Route::get('cadastro', 'UsersController@dados');
 Route::get('funcionarios', 'UsersController@funcionarios');
@@ -68,6 +71,11 @@ Route::put('analise/relatorios/revisao/{id}', 'RelatoriosController@saveRevisao'
 Route::get('analise/relatorios/{id}/{loja}', 'RelatoriosController@lista');
 Route::get('analise/relatorios/disciplina/{id}/{inc?}', 'RelatoriosController@disciplina');
 
+Route::get('analise/relatorios_antigos', 'RelatoriosController@index_old');
+Route::get('analise/relatorios_antigos/{id}', 'RelatoriosController@show_old');
+Route::get('analise/relatorios_antigos/pdf/{id}', 'RelatoriosController@pdf_old');
+Route::get('analise/relatorios_antigos/{id}/{loja}', 'RelatoriosController@lista_old');
+
 
 Route::resource('analise/figuras', 'FigurasController');
 Route::get('analise/figuras/create/{id}', 'FigurasController@create');
@@ -76,6 +84,12 @@ Route::resource('analise/projetos', 'ProjetosController');
 Route::get('analise/projetos/download/{id}', 'ProjetosController@download');
 Route::get('analise/projetos/revisao/{id}', 'ProjetosController@revisao');
 Route::put('analise/projetos/revisao/{id}', 'ProjetosController@storeRevisao');
+
+Route::get('analise/projetos/arquivo/{id}', 'ProjetosController@addArquivo');
+Route::post('analise/projetos/arquivo/{id}', 'ProjetosController@storeArquivos');
+
+Route::get('analise/projetos/detalhes/{id}', 'ProjetosController@detalhes');
+
 
 Route::resource('analise/grupos', 'GruposController');
 Route::get('analise/grupos/edit/{id}', 'GruposController@edit');

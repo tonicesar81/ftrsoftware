@@ -93,11 +93,11 @@ class ShoppingsController extends Controller {
 
         $shopping->save();
 
-        foreach ($request->users as $user) {
-            DB::table('users_shoppings')->insert(
-                    ['shoppings_id' => $shopping->id, 'users_id' => $user]
-            );
-        }
+//        foreach ($request->users as $user) {
+//            DB::table('users_shoppings')->insert(
+//                    ['shoppings_id' => $shopping->id, 'users_id' => $user]
+//            );
+//        }
 
         return redirect('shoppings')->with('message', 'Shopping cadastrado com sucesso!');
     }

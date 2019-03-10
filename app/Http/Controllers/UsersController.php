@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use App\tipo_relatorios;
 use App\Users_responsaveis;
 
-//use App\Mail\NewUser;
+use App\Mail\NewUser;
 
 class UsersController extends Controller {
 
@@ -150,6 +150,30 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
+    
+    public function exportar(){
+        $this->permission();
+        $users_old = DB::table('users_copy')
+                ->where('user_levels_id', 99)
+                ->get();
+        foreach($users_old as $o_user){
+            $user = new User;
+            $user->name = $o_user->name;
+            $user->username = $o_user->username;
+            $user->email = $o_user->email;
+            $user->password = $o_user->password;
+            $user->created_at = $o_user->created_at;
+            $user->save();
+            if(!is_null($o_user->shoppings)){
+                $shoppings = explode(',', $o_user->shoppings);
+                foreach($shoppings as $s){
+                    DB::table('users_shoppings')->insert(
+                        ['shoppings_id' => $s, 'users_id' => $user->id]
+                    );
+                }
+            }
+        }
+    }
     public function create() {
         //
         $this->permission();
@@ -439,7 +463,7 @@ class UsersController extends Controller {
 
         $user->delete();
 
-        return rredirect()->back()->with('message', 'Usuário removido com sucesso');
+        return redirect()->back()->with('message', 'Usuário removido com sucesso');
     }
 
 }

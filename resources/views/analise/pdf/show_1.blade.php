@@ -152,7 +152,7 @@ and open the template in the editor.
                 @foreach($s['itens'] as $item)
                 <tr>
                     <td>{{$n}}.{{$i}} - {{ $item->item }}</td>
-                    <td class="text-center">{{ $stat = ($item->sts > 0)? 'NÃO OK' : 'OK'}}</td>
+                    <td class="text-center">{{ ($item->obs->isEmpty())? 'OK' : 'NÃO OK'}}</td>
                 </tr>
                 @php
                     foreach($item->obs as $obs){

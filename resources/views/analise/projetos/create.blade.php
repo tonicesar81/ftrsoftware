@@ -10,13 +10,13 @@ foreach ($tipo_relatorios as $t) {
     $tipo_relatorio[$t->id] = $t->tipo_relatorio;
 }
 $tipo_relatorio = [
-    1 => 'Detecção e alarme',
-    3 => 'Rede de sprinklers - Extintores',
-    5 => 'Sistema Fixo de Combate a Incêndio',
-    6 => 'Sistema de Exaustão Mecânica',
-    7 => 'Análise de Gás',
-    8 => 'Hidrantes',
-    9 => 'Sistema de Ar Condicionado'
+    1 => 'DET E ALARME - Detecção e alarme',
+    3 => 'SPK EXTINTORES - Rede de sprinklers - Extintores',
+    5 => 'CO2 SAP - Sistema Fixo de Combate a Incêndio',
+    6 => 'EXAUST - Sistema de Exaustão Mecânica',
+    7 => 'GAS - Análise de Gás',
+    8 => 'HIDRANTES - Hidrantes',
+    9 => 'HVAC - Sistema de Ar Condicionado'
 ];
 ?>
 <div class="container">
@@ -36,7 +36,7 @@ $tipo_relatorio = [
     @endif
     <div class="card">
         <div class="card-header">
-            Novo projeto
+            Novo projeto -  1º Passo: Cadastro de Projeto
         </div>
         <div class="card-body">
             {!! Form::open(['action' => 'ProjetosController@store', 'files' => true]) !!}
@@ -59,9 +59,15 @@ $tipo_relatorio = [
                     {!! Form::text('numero', null, ['class' => 'form-control text-uppercase']); !!}
                 </div>
                 <div class="form-group col-8 offset-md-2">
-
-                    {!! Form::label('tipo_relatorios', 'Escolha a disciplina a ser analisada') !!}
-                    {!! Form::select('tipo_relatorios',$tipo_relatorio ,null, ['class' => 'form-control', 'id' => 'select-shopping']) !!}
+                    Escolha uma ou mais disciplinas a serem analisadas nesse projeto
+                </div>
+                <div class="form-group col-8 offset-md-2">
+                    @foreach($tipo_relatorio as $k => $v)
+                    <div class="form-check">
+                    {!! Form::checkbox('tipo_relatorios[]', $k, false, ['class' => 'form-check-input'] ) !!}
+                    {!! Form::label('tipo_relatorios', $v, ['class' => 'form-check-label']) !!}
+                    </div>
+                    @endforeach                    
                 </div>
                 <div class="form-group col-8 offset-md-2">
                     {!! Form::label('memorial', 'Memorial') !!}
@@ -74,29 +80,11 @@ $tipo_relatorio = [
                     </small>
                 </div>
                 <div class="form-group col-8 offset-md-2">
-                    Arquivos para análise
-                </div>
-                <div class="form-group col-8 offset-md-2 row">
-                    <div class="col-6">
-                    {!! Form::label('pdf', 'Versão em PDF (Obrigatório)') !!}
-                    {!! Form::file('pdf[]', ['class' => 'form-control pdf', 'required' => true, 'onChange' => 'validate(this.value, \'pdf\')']); !!}
-                    </div>
-                    <div class="col-6">
-                    {!! Form::label('pdf', 'Versão em DWG (Obrigatório)') !!}
-                    {!! Form::file('dwg[]', ['class' => 'form-control dwg', 'onChange' => 'validate(this.value, \'dwg\')']); !!}
-                    </div>
-                    <div class="form-group col-8 offset-md-2">
-                        <hr>
-                    </div>
-                    <div id="file-0" class="row">
-
-                    </div>
-                    
-                    <div class="col-12">
-                        <hr>
-                    {!! Form::button('Mais arquivos', ['class' => 'btn btn-primary', 'onClick' => 'addFile(0);']); !!}
-                    </div>
-                    
+                    {!! Form::label('arquitetura', 'Projeto de arquitetura') !!}
+                    {!! Form::file('arquitetura', ['class' => 'form-control memorial', 'onChange' => 'validate(this.value, \'pdf,dwg\')']); !!}
+                    <small id="inputHelpBlock" class="form-text text-muted">
+                        (Opcional. Somente PDF ou DWG)
+                    </small>
                     <small id="inputHelpBlock" class="form-text text-muted">
                         Tamanho máximo por arquivo: 50MB
                     </small>
@@ -104,7 +92,22 @@ $tipo_relatorio = [
                 
                 
                 <div class="form-group col-8 offset-md-2">
-                    {!! Form::submit('Salvar', ['id' => 'btSalva', 'class' => 'btn btn-primary', 'onClick' => 'carregar();']); !!}
+                    {!! Form::label('observacao', 'Observações do projetista') !!}
+                    {!! Form::textarea('observacao', null, ['class' => 'form-control']) !!}
+                </div>
+                <div class="form-group col-6 offset-md-3">
+                    {!! Form::label('imagem', 'Imagens ilustrativas') !!}
+                    {!! Form::file('obsFile', ['class' => 'form-control-file imagem', 'id' => 'obsFile', 'onchange' => "pegaImagem()"]) !!}
+                </div>
+                <div class="form-group col-8 offset-md-2" id="obsImgs">
+
+                </div>
+                <div class="form-group col-8 offset-md-2">
+                    {!! Form::label('infra', 'Informações sobre Infraestrutura da loja') !!}
+                    {!! Form::textarea('infra', null, ['class' => 'form-control']) !!}
+                </div>
+                <div class="form-group col-8 offset-md-2">
+                    {!! Form::submit('Continuar', ['id' => 'btSalva', 'class' => 'btn btn-primary', 'onClick' => 'carregar();']); !!}
                 </div>
                 <div class='form-group col-8 offset-md-2'>
                     <div id="loader">
@@ -137,12 +140,27 @@ $tipo_relatorio = [
         var ext = file.split(".");
         ext = ext[ext.length-1].toLowerCase();      
         var arrayExtensions = ["jpg" , "jpeg", "png", "bmp", "gif"];
-
-        if (ext != type) {
-//            alert("Wrong extension type.");
+        var arr = type.split(",");
+        if(jQuery.inArray(ext, arr) === -1) {
             $('#fileError').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert">Formato de arquivo inválido <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
         }
+//        if (ext != type) {
+////            alert("Wrong extension type.");
+//            $('#fileError').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert">Formato de arquivo inválido <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+//        }
     }
+    
+    function pegaImagem(){
+        var file = $('#obsFile')[0].files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            var img = reader.result;
+            $('#obsImgs').append('<div class="form-group col-4"><a class="btn btn-outline-primary btn-sm" href="#obsImgs" role="button" onclick="$(this).parent().remove()" data-html2canvas-ignore="true">X</a><img src="'+img+'" class="img-fluid" /><input type="hidden" name="obsImg[]" value="'+img+'" /></div>');
+        };
+        $('#obsFile').val('');
+    }
+    
 //    $(function () {
 //        $('.memorial').change(function () {
 //            var val = $(this).val().toLowerCase(),

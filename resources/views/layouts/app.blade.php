@@ -85,6 +85,7 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <!-- Left Side Of Navbar -->
                         <ul class="navbar-nav mr-auto">
+                            
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Análises</a>
                                 <div class="dropdown-menu">
@@ -92,6 +93,8 @@ $nivel = App\User_dados::where('users_id',Auth::id())->value('user_levels_id');
                                     <a class="dropdown-item" href="{{ url('/analise/relatorios')}}">Relatórios</a>
                                     <a class="dropdown-item" href="{{ url('arquivos')}}">Arquivos</a>
                                     <a class="dropdown-item" href="{{ url('manuais/ftr_software_guia_analise.pdf')}}" target="_blank">Guia de uso</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url('/analise/relatorios_antigos')}}">Relatórios da Versão Anterior</a>
                                     @if(!is_null($nivel))
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ url('/analise/sistema')}}">Disciplinas</a>

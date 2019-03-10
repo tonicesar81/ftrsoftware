@@ -77,18 +77,19 @@ foreach ($tipo_relatorios as $t) {
     <div class="form-row">
         <div class="form-group col-4">
             {!! Form::label('loja', 'Nome da loja') !!}
-            {!! Form::text('loja', $projeto->loja, ['class' => 'form-control text-uppercase']) !!}
+            {!! Form::text('loja', (!is_null($projeto)) ? $projeto->loja : '', ['class' => 'form-control text-uppercase']) !!}
         </div>
         <div class="form-group col-4">
             {!! Form::label('shoppings_id', 'Shopping') !!}
-            {!! Form::select('shoppings_id',$shopping ,$projeto->shoppings_id, ['class' => 'form-control', 'id' => 'select-shopping']) !!}
+            {!! Form::select('shoppings_id',$shopping ,(!is_null($projeto)) ? $projeto->shoppings_id : '', ['class' => 'form-control', 'id' => 'select-shopping']) !!}
         </div>
         <div class="form-group col-4">
             @php $a = array() @endphp
+            @if(!is_null($arquivos))
             @foreach($arquivos as $arquivo)
             @php $a[] .= $arquivo->filename @endphp
             @endforeach
-
+            @endif
             {!! Form::label('id_arquivo', 'Identificação do arquivo') !!}
             {!! Form::text('id_arquivo', implode(' / ', $a), ['class' => 'form-control']) !!}
         </div>
@@ -99,67 +100,9 @@ foreach ($tipo_relatorios as $t) {
             {!! Form::label('objetivo', 'Objetivo') !!}
             {!! Form::textarea('objetivo',$objetivos->objetivo ,['class' => 'form-control summernote']) !!}
         </div>
-               
-        <div class="form-group col-12">
-            <table class="table">
-                <thead>
-                    <tr class="bg-primary text-white">
-                        <th  colspan="2" >1. {!! $projeto->tipo_relatorio !!}</th>
-                        {!! Form::hidden('tipo_relatorios_id[]', $projeto->tipo_relatorios_id, ['class' => 'form-control']) !!}
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                    $i=1;
-                    @endphp
-                    @foreach($itens as $item)
-                    <tr>
-                        <td width='60%'>
-                            1.{{$i}} - {!! $item->item !!} {{ ($item->id == 60) ? '(SOMENTE PARA SHOPPING TIJUCA)' : '' }}
-                        </td>
-                        <td>
-                            {!! Form::radio('ok-'.$item->id, '0', true, ['onclick' => 'abreOk('.$item->id.')']) !!} OK
-                            {!! Form::radio('ok-'.$item->id, '1', false, ['onclick' => 'abreNaoOk('.$item->id.')']) !!} NÃO OK
-                            <div id='{{$item->id}}' class="bg-obs d-none">
-                                @foreach($item->obs as $ob)
-                                <div class="form-check">
-                                    {!! Form::checkbox('obs[]', $ob->id, false, ['class' => 'form-check-input', 'onclick' => 'mostraFigura("#obs-fig-'.$ob->id.'")'])!!}
-                                    {!! Form::label('obs', $ob->lista_analise, ['class' => 'form-check-label']) !!}
-                                    <div id="obs-fig-{{$ob->id}}" class="border border-primary d-none">
-                                        
-                                        {!! Form::button('+ Figura', ['class' => 'btn btn-primary btn-sm', 'data-toggle' => 'modal', 'data-target' => '#exampleModal', 'onClick' => 'figuraObs('.$ob->id.')']); !!}
-                                        <hr>
-                                        <div class="px-1" id='figuras-{{$ob->id}}'>
-                                            @if($ob->figura != '')
-                                            <img src='{{ asset('storage/'.$ob->figura) }}' style='max-width:100px;max-height:50px;' >
-                                            {!! Form::hidden('ob-figura-'.$ob->id,  $ob->figura) !!}
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-                                <div class="form-group">
-                                    @php $name = 'comm_'.$item->id; @endphp
-                                    {!! Form::label('comm_'.$item->id , 'Outra observação') !!}
-                                    {!! Form::textarea('comm_'.$item->id, null, ['class' => 'form-control text-uppercase', 'rows' => '3']) !!}
-                                    {!! Form::button('+ Figura', ['class' => 'btn btn-primary btn-sm', 'data-toggle' => 'modal', 'data-target' => '#exampleModal', 'onClick' => 'figuraObs('.$item->id.', true)']); !!}
-                                    <div id='c-figuras-{{$item->id}}'></div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    @php
-                    $i++;
-                    @endphp
-                    @endforeach
-                </tbody>
-            </table>
-            <div class="form-group col-12">
-                {!! Form::label('detalhamento', 'Detalhamento') !!}
-                {!! Form::textarea('detalhamento[]',$tipo_r->detalhamento ,['class' => 'form-control summernote']) !!}
-            </div> 
-            <div id="x-sys"></div>
-            <div id="loader"></div>
+        
+            <div id="x-sys" class="form-group col-12 form-row"></div>
+            <div id="loader" class="form-group col-12"></div>
             <hr />
             <div class="form-group col-12 form-row">
                 <div class="col">                
@@ -185,7 +128,7 @@ foreach ($tipo_relatorios as $t) {
             {!! Form::textarea('consideracao',$objetivos->consideracao ,['class' => 'form-control summernote']) !!}
         </div>
         <div class="form-group col-12">
-            {!! Form::hidden('projetos_id', $projeto->id, ['class' => 'form-control']) !!}
+            {!! Form::hidden('projetos_id', (!is_null($projeto)) ? $projeto->id : null, ['class' => 'form-control']) !!}
             {!! Form::submit('Salvar', ['class' => 'btn btn-primary']); !!}
         </div>
 
@@ -233,23 +176,7 @@ foreach ($tipo_relatorios as $t) {
 </div>
 </div>
 </div>
-@if($projeto->tipo_relatorios_id == 3)
-<script>
-    $(document).ready(function () {
-        // Handler for .ready() called.
-        $("#x-sys").load("{{url('/analise/relatorios/disciplina/4/2')}}");
-    });
-//    $('#exampleModal').on('show.bs.modal', function (event) {
-//        var button = $(event.relatedTarget) // Button that triggered the modal
-//        var recipient = button.data('whatever') // Extract info from data-* attributes
-//        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-//        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-//        var modal = $(this)
-//        modal.find('.modal-title').text('New message to ' + recipient)
-//        modal.find('.modal-body input').val(recipient)
-//    })
-</script>    
-@endif
+
 <script>
     var analise = '';
     var comm = false;
@@ -274,7 +201,9 @@ foreach ($tipo_relatorios as $t) {
     })
 </script>
 <script>
-    var inc = 1;
+    
+    var inc = 0;
+    
     function abreNaoOk(id) {
         $('#' + id).css('display:block');
         $('#' + id).removeClass('d-none');

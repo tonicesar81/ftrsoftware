@@ -611,7 +611,7 @@ class ObrasController extends Controller
 //                INNER JOIN vistorias as v on i.vistorias_id = v.id
 //                INNER JOIN instalacoes as s on v.instalacoes_id = s.id
 //                WHERE s.man_itens_id = 1
-                $imagens = DB::table('Man_imagens as i')
+                $imagens = DB::table('man_imagens as i')
                         ->join('vistorias as v', 'i.vistorias_id', '=', 'v.id')
 //                        ->join('instalacoes as s', 'v.instalacoes_id', '=', 's.id')
                         ->select('i.imagem', 'i.obs')

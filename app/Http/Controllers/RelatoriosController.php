@@ -26,6 +26,7 @@ use App\Arquivos;
 use App\Classes\PDFWatermark;
 use App\Classes\PDFWatermarker;
 use App\User_dados;
+use App\Mail\NewUser;
 
 class RelatoriosController extends Controller {
 
@@ -159,6 +160,69 @@ class RelatoriosController extends Controller {
         return view('analise.relatorio.pastas', ['pastas' => $pastas, 'shoppings' => $shoppings]);
 //        return $pastas;
     }
+    
+    public function index_old() {
+//        return "Hello!";
+//        $this->permission();
+        if ((Auth::user()->user_levels_id > 4) && (Auth::user()->user_levels_id != 99)) {
+            abort(403);
+        }
+        $shoppings = $this->getShoppings();
+//        SELECT shoppings.shopping,
+//        (SELECT COUNT(DISTINCT loja) FROM relatorios WHERE relatorios.shoppings_id = shoppings.id) AS lojas,
+//        relatorios.created_at,relatorios.updated_at
+//        FROM shoppings
+//        LEFT JOIN relatorios ON relatorios.shoppings_id = shoppings.id
+//        -- WHERE (SELECT COUNT(DISTINCT loja) FROM relatorios WHERE relatorios.shoppings_id = shoppings.id) > 0
+//        GROUP BY shopping
+//        ORDER BY updated_at DESC
+        foreach($shoppings as $shopping){
+            $shop_list[] = $shopping->id;
+        }
+        if (is_null($this->nivel())) {
+            $pastas = DB::table('shoppings')
+                    ->leftJoin('relatorios_copy', 'relatorios_copy.shoppings_id', '=', 'shoppings.id')
+                    ->select(DB::raw('shoppings.id,shoppings.shopping,(SELECT COUNT(DISTINCT loja) FROM relatorios_copy WHERE relatorios_copy.shoppings_id = shoppings.id) AS lojas, (SELECT updated_at FROM relatorios_copy WHERE shoppings_id = shoppings.id ORDER BY updated_at DESC LIMIT 0,1) AS updated_at'))
+                    ->whereRaw('(SELECT COUNT(DISTINCT loja) FROM relatorios_copy WHERE relatorios_copy.shoppings_id = shoppings.id) > 0 AND relatorios_copy.shoppings_id IN (' . implode(',',$shop_list) . ')')
+                    ->groupby('shopping')
+                    ->orderby('updated_at', 'DESC')
+                    ->get();
+        } else {
+            $pastas = DB::table('shoppings')
+                    ->leftJoin('relatorios_copy', 'relatorios_copy.shoppings_id', '=', 'shoppings.id')
+                    ->select(DB::raw('shoppings.id,shoppings.shopping,(SELECT COUNT(DISTINCT loja) FROM relatorios_copy WHERE relatorios_copy.shoppings_id = shoppings.id) AS lojas, (SELECT updated_at FROM relatorios_copy WHERE shoppings_id = shoppings.id ORDER BY updated_at DESC LIMIT 0,1) AS updated_at'))
+                    ->whereRaw('(SELECT COUNT(DISTINCT loja) FROM relatorios_copy WHERE relatorios_copy.shoppings_id = shoppings.id) > 0')
+                    ->groupby('shopping')
+                    ->orderby('updated_at', 'DESC')
+                    ->get();
+        }
+        return view('analise.relatorio.old.pastas', ['pastas' => $pastas, 'shoppings' => $shoppings]);
+//        return $pastas;
+    }
+    
+    public function show_old($id) {
+//        $this->permission();
+        if ((Auth::user()->user_levels_id > 4) && (Auth::user()->user_levels_id != 99)) {
+            abort(403);
+        }
+
+        if ((Auth::user()->user_levels_id == 99) && (!in_array($id, explode(',', Auth::user()->shoppings)))) {
+            abort(403);
+        }
+
+        $shoppings = $this->getShoppings();
+        $shopping_select = DB::table('shoppings')->where('id', $id)->value('shopping');
+//        SELECT *,(SELECT COUNT(*) FROM relatorios WHERE loja = r1.loja) AS rels 
+//        FROM `relatorios` r1 WHERE r1.shoppings_id = 6 GROUP BY r1.loja ORDER BY r1.updated_at DESC
+        $subpastas = DB::table('relatorios_copy as r1')
+                ->select(DB::raw('r1.id,r1.shoppings_id,r1.loja,(SELECT COUNT(*) FROM relatorios_copy WHERE loja = r1.loja AND shoppings_id = ' . $id . ') AS rels, (SELECT updated_at FROM relatorios_copy WHERE shoppings_id = r1.shoppings_id AND loja = r1.loja ORDER BY updated_at DESC LIMIT 0,1) AS updated_at'))
+                ->where('r1.shoppings_id', $id)
+                ->groupby('r1.loja')
+                ->orderby('updated_at', 'desc')
+                ->get();
+        return view('analise.relatorio.old.subpastas', ['subpastas' => $subpastas, 'shoppings' => $shoppings, 'shopping_select' => $shopping_select]);
+//        return $subpastas;
+    }
 
     public function index_1() {
         //
@@ -213,60 +277,61 @@ class RelatoriosController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id, $inc = null) {
+    public function create($id = null, $inc = null) {
         //
 //        $id = 1;
         $this->permission();
         
         $dados = DB::table('user_dados')->where('users_id', Auth::id())->first();
         if(is_null($dados->assinatura)){
-            return redirect()->back()->with('message', 'Não é possível analisar esse projeto pois você ainda não cadastrou a sua assinatura.'); 
+//            return redirect()->back()->with('message', 'Não é possível analisar esse projeto pois você ainda não cadastrou a sua assinatura.'); 
         }
-        
-        $projeto = DB::table('projetos as p')
-                ->join('shoppings as s', 's.id', '=', 'p.shoppings_id')
-                ->join('tipo_relatorios as t', 't.id', '=', 'p.tipo_relatorios_id')
-                ->select('p.*', 't.tipo_relatorio', 's.shopping')
-                ->where('p.id', $id)
-                ->first();
-        $itens = Itens::where('tipo_relatorios_id', $projeto->tipo_relatorios_id)->get();
-        foreach ($itens as $item) {
+        if(!is_null($id)){
+            $projeto = DB::table('projetos as p')
+                    ->join('shoppings as s', 's.id', '=', 'p.shoppings_id')
+                    ->join('tipo_relatorios as t', 't.id', '=', 'p.tipo_relatorios_id')
+                    ->select('p.*', 't.tipo_relatorio', 's.shopping')
+                    ->where('p.id', $id)
+                    ->first();
+            $itens = Itens::where('tipo_relatorios_id', $projeto->tipo_relatorios_id)->get();
+            foreach ($itens as $item) {
 
-            $itens->map(function ($item) {
-                $obs = Lista_analises::where('itens_id', $item->id)->get();
-                $item['obs'] = $obs;
-                return $item;
-            });
+                $itens->map(function ($item) {
+                    $obs = Lista_analises::where('itens_id', $item->id)->get();
+                    $item['obs'] = $obs;
+                    return $item;
+                });
+            }
+            $tipo_r = DB::table('tipo_relatorios')
+                    ->where('id',$projeto->tipo_relatorios_id)
+                    ->first();
+            //$relatorios = Relatorios::where('id','=',$id)->first();
+    //        $relatorios = DB::table('tipo_relatorios')->where('id', $id)->first();
+            $arquivos = DB::table('projetos_arquivos')
+                    ->where('projetos_id', $id)
+                    ->whereNull('memorial')
+                    ->where('filename', 'like', '%.dwg')
+    //                ->where([
+    //                    ['projetos_id', '=', $id],
+    //                    ['memorial', '<>', 1],
+    //                ])
+                    ->get();
         }
-        $tipo_r = DB::table('tipo_relatorios')
-                ->where('id',$projeto->tipo_relatorios_id)
-                ->first();
-        //$relatorios = Relatorios::where('id','=',$id)->first();
-//        $relatorios = DB::table('tipo_relatorios')->where('id', $id)->first();
-        $arquivos = DB::table('projetos_arquivos')
-                ->where('projetos_id', $id)
-                ->whereNull('memorial')
-                ->where('filename', 'like', '%.dwg')
-//                ->where([
-//                    ['projetos_id', '=', $id],
-//                    ['memorial', '<>', 1],
-//                ])
-                ->get();
         $array = [
-            'projeto' => $projeto,
-            'arquivos' => $arquivos,
-            'itens' => $itens,
+            'projeto' => (isset($projeto)) ? $projeto : null,
+            'arquivos' => (isset($arquivos)) ? $arquivos : null,
+            'itens' => (isset($itens)) ? $itens : null,
             'shoppings' => DB::table('shoppings')->select('*')->get(),
 //            'relatorio' => $relatorios,
             'objetivos' => Objetivos::find(1),
             'tipo_relatorios' => Tipo_relatorios::all(),
-            'tipo_r' => $tipo_r,
+            'tipo_r' => (isset($tipo_r)) ? $tipo_r : null,
             'inc' => $inc
         ];
         $view = (isset($inc)) ? 'analise.relatorio.inc' : 'analise.relatorio.create';
         return view($view, $array);
     }
-
+    
     public function disciplina($id, $inc = null) {
         //
 //        $id = 1;
@@ -335,7 +400,7 @@ class RelatoriosController extends Controller {
         }
         
         
-
+        //return (PHP_OS);
         $relatorio->save();
 
         $relatorio_id = $relatorio->id;
@@ -358,21 +423,40 @@ class RelatoriosController extends Controller {
                     $watermark = new PDFWatermark(public_path('img/ftr-marca-1.png'), storage_path('app/projetos/' . $arquivo->filepath));
                     $watermarker = new PDFWatermarker(storage_path('app/projetos/' . $arquivo->filepath), public_path('storage/arquivos/' . $arquivo->filepath), $watermark);
                 }
-                $arq = new Arquivos;
-                $arq->shoppings_id = $request->shoppings_id;
-                $arq->loja = strtoupper($request->loja);
-                $arq->arquivo = $arquivo->filename;
-                $arq->hash = $arquivo->filepath;
-                $arq->dtRecebimento = $arquivo->created_at;
-                $arq->save();
-                
-                //Set page range. Use 1-based index.
-                $watermarker->setPageRange(1);
+                // pdf version information
+                //return storage_path('app/projetos/' . $arquivo->filepath);
+                if(PHP_OS != "WINNT"){
+                $filepdf = fopen(storage_path('app/projetos/' . $arquivo->filepath,"r"));
+                    if ($filepdf) {
+                    $line_first = fgets($filepdf);
+                    fclose($filepdf);
+                    } else{
+                    //echo "error opening the file.";
+                    }
 
-                //Save the new PDF to its specified location
-                $watermarker->savePdf();
-                
+                    // extract number such as 1.4 ,1.5 from first read line of pdf file
+                    preg_match_all('!\d+!', $line_first, $matches);	
+                    // save that number in a variable
+                    $pdfversion = implode('.', $matches[0]);
+
+                    $arq = new Arquivos;
+                    $arq->shoppings_id = $request->shoppings_id;
+                    $arq->loja = strtoupper($request->loja);
+                    $arq->arquivo = $arquivo->filename;
+                    $arq->hash = $arquivo->filepath;
+                    $arq->dtRecebimento = $arquivo->created_at;
+                    $arq->save();
+
+                    if($pdfversion < "1.5"){
+                        //Set page range. Use 1-based index.
+                        $watermarker->setPageRange(1);
+
+                        //Save the new PDF to its specified location
+                        $watermarker->savePdf();
+                    }
+                }
             }
+            
         }
 
         if ($request->obs != null) {
@@ -497,6 +581,24 @@ class RelatoriosController extends Controller {
                 ->implode(' ');
         $shopping = DB::table('shoppings')->where('id', $request->shoppings_id)->value('shopping');
         $rev = '00';
+        
+        if(!is_null($relatorio->projetos_id)){
+            $projeto = Projetos::find($relatorio->projetos_id);
+            $projeto_tipos = explode(',', $projeto->tipo_relatorios_id);
+//            $relatorio_tipos = array_splice(explode(',', $relatorio->tipo_relatorios_id), array_search(4, explode(',', $relatorio->tipo_relatorios_id) ), 1);
+            $relatorio_tipos = explode(',', $relatorio->tipo_relatorios_id);
+            if(in_array(4, $relatorio_tipos)){
+                $seek = array_search(4,$relatorio_tipos);
+                unset($relatorio_tipos[$seek]);
+            }
+            $new_tipos = array_diff($projeto_tipos,$relatorio_tipos);
+//            echo var_dump($relatorio_tipos);
+//            echo var_dump($projeto_tipos);
+//            exit();
+            $projeto->tipo_relatorios_id = implode(',', $new_tipos);
+            
+            $projeto->save();
+        }
 
         try{
             Mail::to($clientes)->send(new NewRelatorio($shopping,$request->loja,$sistema,$rev));
@@ -607,6 +709,61 @@ class RelatoriosController extends Controller {
         );
         return view('analise.relatorio.index', $array);
     }
+    
+    public function lista_old($id, $loja) {
+        //
+//        $this->permission();
+        if ((Auth::user()->user_levels_id > 4) && (Auth::user()->user_levels_id != 99)) {
+            abort(403);
+        }
+
+        if ((Auth::user()->user_levels_id == 99) && (!in_array($id, explode(',', Auth::user()->shoppings)))) {
+            abort(403);
+        }
+
+        $loja = DB::table('relatorios_copy')->where('id', $loja)->value('loja');
+        $relatorios = DB::table('relatorios_copy')
+                ->join('tipo_relatorios', 'tipo_relatorios.id', 'relatorios_copy.tipo_relatorios_id')
+                ->select('tipo_relatorios.tipo_relatorio', 'relatorios_copy.*')
+                ->where('shoppings_id', $id)
+                ->where('loja', $loja)
+                ->orderBy('loja', 'asc')
+                ->get();
+
+        $shopping_select = DB::table('shoppings')
+                ->where('id', $id)
+                ->first();
+
+        foreach ($relatorios as $relatorio) {
+
+            $relatorios->map(function ($relatorio) {
+                $first = Lista_analises::whereIn('id', explode(',', $relatorio->analise));
+//                $first = Lista_analises::whereRaw('itens_id = ' . $item->id . ' AND lista_analises.id IN(' . $relatorio->analise . ')');
+                $obs = DB::table('comentarios_copy')
+                        ->select('id', 'itens_id', 'comentario as lista_analise', 'figura', 'created_at', 'updated_at')
+                        ->where('relatorios_id', $relatorio->id)
+//                        ->where('itens_id',$item->id)
+                        ->union($first)
+                        ->get();
+                $refs = DB::table('tipo_relatorios')
+                        ->whereIn('id', explode(',', $relatorio->tipo_relatorios_id))
+                        ->pluck('ref')
+                        ->toArray();
+                $relatorio->obs = $obs;
+                $relatorio->refs = $refs;
+                return $relatorio;
+            });
+            //$itens->put('obs', $obs);
+            //$item->push($obs);
+        }
+        $array = array(
+            'relatorios' => $relatorios,
+            'shoppings' => $this->getShoppings(),
+            'shopping_select' => $shopping_select,
+            'loja' => $loja
+        );
+        return view('analise.relatorio.old.index', $array);
+    }
 
     public function pdf($id) {
         $shoppings = $this->getShoppings();
@@ -614,9 +771,7 @@ class RelatoriosController extends Controller {
         foreach($shoppings as $shopping){
             $my_shoppings[] = $shopping->id;
         }
-        if((is_null($this->nivel())) && (!in_array($id, $my_shoppings))){
-            abort(403);
-        }
+        
 //        SELECT relatorios.*, shoppings.shopping, users.name, empresas.logo FROM relatorios
 //        INNER JOIN shoppings ON shoppings.id = relatorios.shoppings_id
 //        INNER JOIN empresas ON empresas.id = shoppings.empresas_id
@@ -632,6 +787,10 @@ class RelatoriosController extends Controller {
                 ->where('relatorios.id', $id)
                 ->first();
 
+        if((is_null($this->nivel())) && (!in_array($relatorio->shoppings_id, $my_shoppings))){
+            abort(403);
+        }
+        
         $adicional = Ressalvas::where('relatorios_id', $id)->first();
 
 //        return var_dump($ressalva);
@@ -817,20 +976,30 @@ class RelatoriosController extends Controller {
     }
 
     public function pdf_old($id) {
+        $shoppings = $this->getShoppings();
+        $my_shoppings = array();
+        foreach($shoppings as $shopping){
+            $my_shoppings[] = $shopping->id;
+        }
+        
 //        SELECT relatorios.*, shoppings.shopping, users.name, empresas.logo FROM relatorios
 //        INNER JOIN shoppings ON shoppings.id = relatorios.shoppings_id
 //        INNER JOIN empresas ON empresas.id = shoppings.empresas_id
 //        INNER JOIN users ON users.id = relatorios.users_id
 //        WHERE relatorios.id = 1
-        $relatorio = DB::table('relatorios')
-                ->join('shoppings', 'shoppings.id', '=', 'relatorios.shoppings_id')
+        $relatorio = DB::table('relatorios_copy')
+                ->join('shoppings', 'shoppings.id', '=', 'relatorios_copy.shoppings_id')
                 ->join('empresas', 'empresas.id', '=', 'shoppings.empresas_id')
-                ->join('users', 'users.id', '=', 'relatorios.users_id')
-                ->join('tipo_relatorios', 'tipo_relatorios.id', '=', 'relatorios.tipo_relatorios_id')
-                ->select('relatorios.*', 'shoppings.shopping', 'users.name', 'empresas.logo', 'tipo_relatorios.tipo_relatorio')
-                ->where('relatorios.id', $id)
+                ->join('users_copy', 'users_copy.id', '=', 'relatorios_copy.users_id')
+                ->join('tipo_relatorios', 'tipo_relatorios.id', '=', 'relatorios_copy.tipo_relatorios_id')
+                ->select('relatorios_copy.*', 'shoppings.shopping', 'users_copy.name', 'empresas.logo', 'tipo_relatorios.tipo_relatorio')
+                ->where('relatorios_copy.id', $id)
                 ->first();
-
+        
+        if((is_null($this->nivel())) && (!in_array($relatorio->shoppings_id, $my_shoppings))){
+            abort(403);
+        }
+        
         if ((Auth::user()->user_levels_id == 99) && (!in_array($relatorio->shoppings_id, explode(',', Auth::user()->shoppings)))) {
             abort(403, 'Acesso Negado!');
         }
@@ -839,6 +1008,7 @@ class RelatoriosController extends Controller {
 //        INNER JOIN tipo_relatorios ON tipo_relatorios.id = itens.tipo_relatorios_id
 //        WHERE lista_analises.id IN (1,2)
 
+//        return var_dump($relatorio);
         if ($relatorio->analise == null) {
             $relatorio->analise = 0;
         }
@@ -881,8 +1051,8 @@ class RelatoriosController extends Controller {
 
                 $itens->map(function ($item) use($relatorio) {
                     $first = Lista_analises::whereRaw('itens_id = ' . $item->id . ' AND lista_analises.id IN(' . $relatorio->analise . ')');
-                    $obs = DB::table('comentarios')
-                            ->select('id', 'itens_id', 'comentario as lista_analise', 'created_at', 'updated_at')
+                    $obs = DB::table('comentarios_copy')
+                            ->select('id', 'itens_id', 'comentario as lista_analise','figura', 'created_at', 'updated_at')
                             ->where('relatorios_id', $relatorio->id)
                             ->where('itens_id', $item->id)
                             ->union($first)
@@ -908,7 +1078,8 @@ class RelatoriosController extends Controller {
 //        }
 //        exit();
         //return $sistemas;
-        $figuras = Figuras::where('relatorios_id', $id)->get();
+//        $figuras = Figuras::where('relatorios_id', $id)->get();
+        $figuras = DB::table('figuras_copy')->where('relatorios_id', $id)->get();
         //end loop
         $data = array(
             'relatorio' => $relatorio,
@@ -924,7 +1095,7 @@ class RelatoriosController extends Controller {
         $filename .= ' - ' . $relatorio->shopping . ' - ' . $relatorio->loja . '.pdf';
 //        $filename = 'RELATORIO DE ANÁLISE DE PROJETOS '.implode(' - ', $refs).' REV '.sprintf('%1$02d', $relatorio->revisao).' - '.date('d-m-Y',$relatorio->created_at).' - '.$relatorio->shopping.' - '.$relatorio->loja.'.pdf';
         //$pdf = \App::make('dompdf.wrapper');
-        $pdf = \DOMPDF::loadView('analise.pdf.show', $data);
+        $pdf = \DOMPDF::loadView('analise.pdf.show_1', $data);
         $pdf->getDomPDF()->set_option("enable_php", true);
         //$pdf->loadView('analise.pdf.show', $data);
         //$pdf->loadHTML('your view here ');
@@ -1041,6 +1212,8 @@ class RelatoriosController extends Controller {
 //        return var_dump($p_arquivos);
         return view('analise.relatorio.edit', $array);
     }
+    
+    
 
     /**
      * Update the specified resource in storage.
@@ -1592,6 +1765,25 @@ class RelatoriosController extends Controller {
                 }
             }
         }
+        
+        if(!is_null($relatorio->projetos_id)){
+            $projeto = Projetos::find($relatorio->projetos_id);
+            $projeto_tipos = explode(',', $projeto->tipo_relatorios_id);
+//            $relatorio_tipos = array_splice(explode(',', $relatorio->tipo_relatorios_id), array_search(4, explode(',', $relatorio->tipo_relatorios_id) ), 1);
+            $relatorio_tipos = explode(',', $relatorio->tipo_relatorios_id);
+            if(in_array(4, $relatorio_tipos)){
+                $seek = array_search(4,$relatorio_tipos);
+                unset($relatorio_tipos[$seek]);
+            }
+            $new_tipos = array_diff($projeto_tipos,$relatorio_tipos);
+//            echo var_dump($relatorio_tipos);
+//            echo var_dump($projeto_tipos);
+//            exit();
+            $projeto->tipo_relatorios_id = implode(',', $new_tipos);
+            
+            $projeto->save();
+        }
+        
 //        SELECT u.email FROM users AS u
 //        INNER JOIN users_shoppings AS s
 //        ON s.users_id = u.id

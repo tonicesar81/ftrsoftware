@@ -1,5 +1,17 @@
 @extends('layouts.app')
 @section('content')
+<?php
+$tipo_relatorio = [
+    1 => 'DET E ALARME',
+    3 => 'SPK',
+//    4 => 'EXTINTORES',
+    5 => 'CO2 SAP',
+    6 => 'EXAUST',
+    7 => 'GAS',
+    8 => 'HIDRANTES',
+    9 => 'HVAC'
+];
+?>
 <div class="container">
     @if(session('message'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -58,41 +70,31 @@
                 <tbody>
                     @foreach($projetos as $projeto)
                     <tr>
-                        <td>{{$projeto->id}}</td>
+                        <td>
+                            @if(!is_null($nivel) && $nivel == 1)
+                            {!! Form::open(['action' => ['ProjetosController@destroy', $projeto->id], 'method' => 'delete']) !!}
+                            {!! Form::button('<i class="fas fa-trash-alt"></i>', ['class' => 'btn btn-outline-danger btn-sm', 'onclick' => 'return confirm(\'Ao apagar esse elemento, todas as dependências serão removidas. \n Deseja consinuar?\')', 'type' => 'submit', 'data-toggle' => 'tooltip', 'data-placement' => 'right', 'title' => 'Apagar']) !!}
+                            {!! Form::close() !!}
+                            @endif
+                            {{$projeto->id}}
+                        </td>
                         <td>{{$projeto->shopping}}</td>
                         <td>{{$projeto->loja}}</td>
                         <td>
-                            @if($projeto->tipo_relatorios_id == 3)
-                            SPK - EXTINTORES
-                            @else
-                            {{$projeto->ref}}
+                            @foreach(explode(',',$projeto->tipo_relatorios_id) as $tipo)
+                            @if($tipo == 3)
+                            <span class="badge badge-primary">SPK - EXTINTORES</span>
+                            @elseif($tipo != 4)
+                            <span class="badge badge-primary">{{$tipo_relatorio[$tipo]}}</span>
                             @endif
+                            @endforeach
                         </td>
                         <td>{{$projeto->revisao}}</td>
                         <td>{{ date('d/m/Y - H:i:s', strtotime($projeto->created_at.' -3 hours')) }}</td>
                         <td>
-                            <div class="dropdown">
-                                @if(!is_null($nivel))
-                                <a class="btn btn-primary" href="
-                                   @if($projeto->revisao == 0)
-                                   {{ url('analise/relatorios/create/'.$projeto->id) }}
-                                   @else
-                                   {{ url('analise/relatorios/revisao/'.$projeto->referencia.'/'.$projeto->id) }}
-                                   @endif
-                                   " role="button" id="dropdownMenuLink"  >
-                                    Analisar
-                                </a>
-                                @endif
-                                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Arquivos
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    @foreach($projeto->arquivos as $arquivo)
-                                    <a class="dropdown-item" href="{{ url('analise/projetos/download/'.$arquivo->id) }}">{{$arquivo->filename}}</a>
-                                    @endforeach
-                                </div>
-                            </div>
+                            <a class="btn btn-primary" href="{{ url('analise/projetos/detalhes/'.$projeto->id) }}" role="button" >
+                                Detalhes
+                            </a>                            
                         </td>
                     </tr>
                     @endforeach
